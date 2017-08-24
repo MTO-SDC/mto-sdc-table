@@ -1,0 +1,111 @@
+<div [ngClass]="{'example-container': tableProperties && tableProperties.maxHeight, 'mat-elevation-z8': tableProperties && tableProperties.elevation}"
+     [ngStyle]="{'max-height.px': tableProperties? tableProperties.maxHeight? tableProperties.maxHeight : null : null}">
+
+  <!-- FILTER  -->
+  <div [hidden]="hideFilterInput" class="example-header">
+    <md-input-container floatPlaceholder="never">
+      <!-- Filter Inoput  -->
+      <input mdInput #filter placeholder="Filter users" (input)="paginator.pageIndex = 0"> <!-- Send to first page on filtering -->
+    </md-input-container>
+  </div>
+
+  <!-- TABLE  -->
+  <md-table #table [dataSource]="mdTableData" mdSort>
+
+    <!--- NOTE: that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition. -->
+    <ng-container *ngFor='let column of columnInfo' flex>
+      <!-- HEADINGS/COLUMNS DEF - sortable  -->
+      <ng-container *ngIf='column.sortable' [cdkColumnDef]='column.key'>
+        <md-header-cell *cdkHeaderCellDef md-sort-header> {{column.heading}} </md-header-cell>
+        <md-cell *cdkCellDef="let row" (click)="cellClicked(row, column)">
+
+          <span *ngIf="column.editing != row[uniqueKey]"> {{row[column.key] | pipeJoin: column.pipeOptions}} </span>
+
+          <md-input-container *ngIf="column.editing == row[uniqueKey]" class="cell-input">
+            <input mdInput [value]="row[column.key]" [focus]="focusEventEmitter" (blur)="cellBlurred($event.target.value, row, column)"/>
+          </md-input-container>
+
+        </md-cell>
+      </ng-container>
+      <!-- HEADINGS/COLUMNS DEF - not sortable  -->
+      <ng-container *ngIf='!column.sortable' [cdkColumnDef]='column.key'>
+        <md-header-cell *cdkHeaderCellDef> {{column.heading}} </md-header-cell>
+        <md-cell *cdkCellDef="let row; let i = index" (click)="cellClicked(row, column)">
+
+          <span *ngIf="column.editing != row[uniqueKey] && !column.button"> {{row[column.key] | pipeJoin: column.pipeOptions}} </span>
+
+          <md-input-container *ngIf="column.editing == row[uniqueKey] && !column.select" class="cell-input">
+            <input mdInput [value]="row[column.key]" [focus]="focusEventEmitter" (blur)="cellBlurred($event.target.value, row, column)"/>
+          </md-input-container>
+
+          <!-- <md-select *ngIf="column.editing == row[uniqueKey] && column.select" [focus]="focusEventEmitter" (onClose)="" class="cell-input">
+            <md-option *ngFor="let option of column.select.options" [value]="option"> {{ option }} </md-option>
+          </md-select> -->
+
+          <button *ngIf="column.button && (column.mdRaisedButton || (!column.mdButton && !column.mdFab && !column.mdMiniFab && !column.mdIconButton))" md-raised-button (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
+            <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
+              {{column.buttonTitle}}
+            <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
+          </button>
+
+          <div *ngIf="column.button && column.mdMiniFab">
+            <button md-mini-fab (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
+              <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
+              {{column.buttonTitle}}
+              <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
+            </button>
+          </div>
+
+          <div *ngIf="column.button && column.mdFab">
+            <button md-fab (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
+              <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
+              {{column.buttonTitle}}
+              <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
+            </button>
+          </div>
+          
+          <div *ngIf="column.button && column.mdButton">
+            <button md-button (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
+              <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
+              {{column.buttonTitle}}
+              <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
+            </button>
+          </div>
+
+          <div *ngIf="column.button && column.mdIconButton">
+            <button md-icon-button (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
+              <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
+              {{column.buttonTitle}}
+              <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
+            </button>
+          </div>
+
+        </md-cell>
+      </ng-container>
+    </ng-container>
+    <!-- BUILD HEADINGS -->
+    <md-header-row *cdkHeaderRowDef="displayedColumns" flex style="position: sticky; top: 0; background-color: inherit"></md-header-row>
+    <!-- BUILD ROWS  -->
+    <md-row *cdkRowDef="let row; columns: displayedColumns; let i=index;" [attr.id]="i" #cdkrow (click)="rowClicked(i, row[uniqueKey])">
+    </md-row>
+
+  </md-table>
+
+
+  <!-- PAGINATION  -->
+   <div [hidden]="mdTableData && tableProperties && !tableProperties.pagination.supported">
+    <md-paginator #paginator
+                  [length]="mdTableData.tableLength"
+                  [pageIndex]="0"
+                  [pageSize]="pageSize()"
+                  [pageSizeOptions]="pageSizeOptions()">
+    </md-paginator>
+  </div> 
+  
+</div>
+
+<div #modalRef [hidden]="hideModal">
+
+</div>
+<!-- <sdc-modal [componentFactory]="factory"></sdc-modal> -->

@@ -1,0 +1,12 @@
+TODO:
+  - Add support for click events emitted back to wrapper component
+  - //DONE// Add support for buttons in table cells with styling (mark) 
+  - //PROGRESS// Add option for fixed headers (mark) --header sticks on scrolling in a fixed height container, basically if maxHeight is set--
+  - //DONE// add option for modals (rob)
+  - add support for exporting to excel
+  - //DONE// add support for inline editing (mark)
+  - //Skipped due to laziness of a particular team member (names were obscured for team safety and morale)// Styling (Rob)
+  - Handle them errors (i.e. can't have modals with inline editing or accordian etc)
+  - //DONE// Add option for pipes (such as currency pipe) (mark)
+  - have date editable via calendar inline popout
+  - add support for other special things in cells (radio buttons, drop down menu, etc) --

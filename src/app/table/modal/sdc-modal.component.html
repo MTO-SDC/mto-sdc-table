@@ -1,0 +1,16 @@
+<div class="modal-background" [hidden]="hideModal" (click)="closeModal()" [ngStyle]="{'background': modalSettings.styles.background.rgbaColor}">
+  <div 
+   class="modal-dialog" 
+   (click)="$event.stopPropagation()" 
+   [ngStyle]="{'background': modalSettings.styles.dialog.rgbaColor,
+               'box-shadow': modalSettings.styles.dialog.boxShadow,
+               'width': modalSettings.styles.dialog.width,
+               'top': modalSettings.styles.dialog.top,
+               'left': modalSettings.styles.dialog.left}">
+    <div>
+      <div #container [attr.id]="0">
+        <ng-content></ng-content>
+      </div>
+    </div>
+  </div>
+</div>

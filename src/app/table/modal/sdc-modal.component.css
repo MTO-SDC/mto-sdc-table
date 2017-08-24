@@ -1,0 +1,50 @@
+.modal-background {
+  /* A dark translucent div that covers the whole screen */
+  position:absolute;
+  z-index:100;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+}
+.modal-dialog {
+  /* background-color: white;   */
+  /* A centered div above the overlay with a box shadow. */
+  z-index:500;
+  position: absolute;
+
+  /* Center the dialog */
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+}
+/* .modal-dialog-content {
+  padding: 10px;
+  margin: 10px;
+} */
+/* .modal-close {
+  position: absolute;
+  top: 0;
+  right: 2px;
+  padding-right: 5px;
+  padding-top: 0px;
+  cursor: pointer;
+  font-size: 145%;
+  display: inline-block;
+  font-weight: bold;
+  font-family: 'arial', 'sans-serif'; 
+}
+
+.modal-title {
+  background: rgba(51, 51, 51, 1);  
+  position: absolute;
+  top: 0;
+  cursor: default;  
+  padding: 0.2em;
+  margin: 0;
+  font-size: 150%;
+  width: 100%;
+  display: inline-block;
+  font-weight: bold; 
+  height: 1.8em;  
+} */
