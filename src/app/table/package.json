@@ -5,6 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "private": false,
   "keywords": [
     "table", "material", "angular", "data", "datatable", "modal", "accordian", "dropdown", "inline", "editing"
   ],
@@ -16,6 +17,10 @@
     },
     {
       "name": "Robert Skakic",
+      "email": "sdc.table@gmail.com"
+    },
+    {
+      "name": "Lukas Rossi",
       "email": "sdc.table@gmail.com"
     }
   ],
