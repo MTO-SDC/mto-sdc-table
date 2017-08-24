@@ -1,15 +1,28 @@
 {
   "name": "mto-sdc-table",
   "version": "0.5.1",
-  "description": "A versatile table module",
+  "description": "A versatile table module built using Angular Material",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "SDC",
-  "contributors": [
-    "Mark Joaquim",
-    "Robert Skakic"
+  "keywords": [
+    "table", "material", "angular", "data", "datatable", "modal", "accordian", "dropdown", "inline", "editing"
   ],
+  "author": "MTO-SDC",
+  "contributors": [
+    {
+      "name": "Mark Joaquim",
+      "email": "sdc.table@gmail.com"
+    },
+    {
+      "name": "Robert Skakic",
+      "email": "sdc.table@gmail.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MTO-SDC/mto-sdc-table"
+  },
   "license": "MIT",
   "dependencies": {
     "@angular/core": "^4.3.5",
