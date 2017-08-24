@@ -33,6 +33,9 @@ npm-debug.log
 testem.log
 /typings
 
+# spec
+/test_results
+
 # e2e
 /e2e/*.js
 /e2e/*.map
@@ -40,3 +43,6 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# vs folder
+/.vs
