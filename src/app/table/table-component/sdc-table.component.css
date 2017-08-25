@@ -5,6 +5,26 @@
   max-height: 500px;
   min-width: 300px; 
 } 
+
+md-input-container.mat-input-container{
+  margin-left: 0;
+  width: 50%;
+}
+
+md-row{
+  min-height: inherit;
+  align-items: center;
+}
+
+md-cell{
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+md-cell.hoverable:hover{
+  background-color: red;
+}
   
 /* .example-header {
   min-height: 64px;

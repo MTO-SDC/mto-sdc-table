@@ -1,0 +1,3 @@
+# Exclude test files
+/**/*.spec.ts
+/e2e

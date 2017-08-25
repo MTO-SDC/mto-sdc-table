@@ -18,8 +18,8 @@
       <!-- HEADINGS/COLUMNS DEF - sortable  -->
       <ng-container *ngIf='column.sortable' [cdkColumnDef]='column.key'>
         <md-header-cell *cdkHeaderCellDef md-sort-header> {{column.heading}} </md-header-cell>
-        <md-cell *cdkCellDef="let row" (click)="cellClicked(row, column)">
-
+        
+        <md-cell *cdkCellDef="let row" (click)="cellClicked(row, column)" hover [hoverable]="column.hoverable">
           <span *ngIf="column.editing != row[uniqueKey]"> {{row[column.key] | pipeJoin: column.pipeOptions}} </span>
 
           <md-input-container *ngIf="column.editing == row[uniqueKey]" class="cell-input">
@@ -31,7 +31,7 @@
       <!-- HEADINGS/COLUMNS DEF - not sortable  -->
       <ng-container *ngIf='!column.sortable' [cdkColumnDef]='column.key'>
         <md-header-cell *cdkHeaderCellDef> {{column.heading}} </md-header-cell>
-        <md-cell *cdkCellDef="let row; let i = index" (click)="cellClicked(row, column)">
+        <md-cell *cdkCellDef="let row; let i = index" (click)="cellClicked(row, column)" hover [hoverable]="column.hoverable">
 
           <span *ngIf="column.editing != row[uniqueKey] && !column.button"> {{row[column.key] | pipeJoin: column.pipeOptions}} </span>
 
@@ -43,14 +43,14 @@
             <md-option *ngFor="let option of column.select.options" [value]="option"> {{ option }} </md-option>
           </md-select> -->
 
-          <button *ngIf="column.button && (column.mdRaisedButton || (!column.mdButton && !column.mdFab && !column.mdMiniFab && !column.mdIconButton))" md-raised-button (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
+          <button *ngIf="column.button && (column.mdRaisedButton || (!column.mdButton && !column.mdFab && !column.mdMiniFab && !column.mdIconButton))" md-raised-button (click)="buttonClicked(i, row[uniqueKey], column)">
             <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
               {{column.buttonTitle}}
             <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
           </button>
 
           <div *ngIf="column.button && column.mdMiniFab">
-            <button md-mini-fab (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
+            <button md-mini-fab (click)="buttonClicked(i, row[uniqueKey], column)">
               <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
               {{column.buttonTitle}}
               <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
@@ -58,7 +58,7 @@
           </div>
 
           <div *ngIf="column.button && column.mdFab">
-            <button md-fab (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
+            <button md-fab (click)="buttonClicked(i, row[uniqueKey], column)">
               <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
               {{column.buttonTitle}}
               <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
@@ -66,7 +66,7 @@
           </div>
           
           <div *ngIf="column.button && column.mdButton">
-            <button md-button (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
+            <button md-button (click)="buttonClicked(i, row[uniqueKey], column)">
               <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
               {{column.buttonTitle}}
               <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
@@ -74,7 +74,7 @@
           </div>
 
           <div *ngIf="column.button && column.mdIconButton">
-            <button md-icon-button (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
+            <button md-icon-button (click)="buttonClicked(i, row[uniqueKey], column)">
               <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
               {{column.buttonTitle}}
               <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>

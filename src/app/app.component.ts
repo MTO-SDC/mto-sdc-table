@@ -8,11 +8,11 @@ import { Component, ComponentFactoryResolver } from '@angular/core';
 export class AppComponent {
   public factory: any;
     public headings = [
-        {heading: 'First Name', sortable: true, filterable: true, key: 'employee.firstName'},
-        {heading: 'Last Name', sortable: true, filterable: true, key: 'employee.lastName' },
-        {heading: 'Address', key: 'employee.addressLine1'}, // , select: {options: [1, 2, 3, 4, 5]
-        {heading: 'Payment Gross Amount', key: 'payment.grossAmount', pipeOptions: {currency: true, custom: (value) => value * 10}},
-        {buttonTitle: 'More Info', button: true, modalOrDropdown: true, iconBefore: 'accessibility', iconAfter: 'home'},
+        {heading: 'First Name', sortable: true, filterable: true, key: 'employee.firstName', hoverable: {backgroundColor: '#CCC'}},
+        {heading: 'Last Name', sortable: true, filterable: true, key: 'employee.lastName', hoverable: {backgroundColor: '#CCC'} },
+        {heading: 'Address', key: 'employee.addressLine1', hoverable: {backgroundColor: '#CCC'}}, // , select: {options: [1, 2, 3, 4, 5]
+        {heading: 'Payment Gross Amount', key: 'payment.grossAmount', pipeOptions: {currency: true, custom: (value) => value * 10}, hoverable: {backgroundColor: '#CCC'}},
+        {buttonTitle: 'More Info', button: true, openCustomComponent: true, iconBefore: 'accessibility', iconAfter: 'home'},
         {buttonTitle: '', button: true, mdButton: true, iconBefore: 'home'}
     ];
     public headingsBasic = [
@@ -23,9 +23,9 @@ export class AppComponent {
     ];
     public data: any[] = new Array<any>();
     private tableProperties = {
-        // accordian: true,
-        modal: true,
-        // inlineEditing: true,
+        accordian: true,
+        // modal: true,
+        inlineEditing: true,
         pagination: {
             supported: true,
             itemsPerPage: 4,

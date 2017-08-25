@@ -15,6 +15,7 @@ import {
 } from '@angular/material';
 import { NgModule } from '@angular/core';
 import { FocusDirective } from './focus-directive/sdc-focus.directive';
+import { HoverDirective } from './sdc-hover-directive/sdc-hover.directive';
 import { PipeJoin } from './pipe-join/sdc-pipe-join.pipe';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -24,6 +25,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         SdcTableComponent,
         SdcModalComponent,
         FocusDirective,
+        HoverDirective,
         PipeJoin
     ],
     imports: [
