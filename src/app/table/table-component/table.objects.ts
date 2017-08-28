@@ -51,6 +51,9 @@ export class ColumnData {
     public mdMiniFab?: boolean;
     public key?: string;
     public openCustomComponent?: boolean;
+    public datepicker?: boolean;
+    public minDate?: Date;
+    public maxDate?: Date;
 }
 
 export class ModalOptions {

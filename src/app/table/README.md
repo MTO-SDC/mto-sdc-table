@@ -138,6 +138,9 @@ export class ColumnData {
     public mdFab: boolean?;
     public mdMiniFab?: boolean;
     public key?: string; // The key within the object that the column is to display
+    public datepicker?: boolean; // is cell a date object that should have a datepicker
+    public minDate?: Date; // minimum date selectable
+    public maxDate?: Date; // maximum date selectable
 }
 
 export class ModalOptions {

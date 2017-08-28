@@ -11,7 +11,9 @@ import {
     MdSortModule,
     MdInputModule,
     MdDialogModule,
-    MdSelectModule
+    MdSelectModule,
+    MdDatepickerModule,
+    MdNativeDateModule
 } from '@angular/material';
 import { NgModule } from '@angular/core';
 import { FocusDirective } from './focus-directive/sdc-focus.directive';
@@ -41,6 +43,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         MdInputModule,
         MdDialogModule,
         MdSelectModule,
+        MdDatepickerModule,
+        MdNativeDateModule,
     ],
     providers: [],
     exports: [

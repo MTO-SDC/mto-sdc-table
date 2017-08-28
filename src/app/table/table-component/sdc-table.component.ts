@@ -304,6 +304,14 @@ export class SdcTableComponent implements OnInit {
         });
         this.mdTableData.setData(this.generateDataSource(this.displayObjects, this.columnInfo));
     }
+
+    private dateCellValueUpdate(updateValue: any, row, column: ColumnData): void {
+        this.change.emit({
+            data: this.updateObjectField(this.displayObjects[row[this.uniqueKey]], column.key, updateValue),
+            index: row[this.uniqueKey]
+        });
+        this.mdTableData.setData(this.generateDataSource(this.displayObjects, this.columnInfo));
+    }
 }
 
 /**

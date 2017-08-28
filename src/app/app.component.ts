@@ -11,6 +11,7 @@ export class AppComponent {
     public headings = [
         {heading: 'First Name', sortable: true, filterable: true, key: 'employee.firstName'},
         {heading: 'Last Name', sortable: true, filterable: true, key: 'employee.lastName' },
+        {heading: 'Birth Date', sortable: true, filterable: true, key: 'birthDate', datePicker: true, minDate: new Date(1997, 2, 27), maxDate: new Date()},
         {
             heading: 'Country', key: 'employee.country', sortable: true, filterable: true,
             select: [
@@ -53,10 +54,8 @@ export class AppComponent {
         // tslint:disable-next-line:forin
         for (let i = 0; i < 5; i++) {
             // this.data.push(TestObjectsService.getTestResult());
-            // tslint:disable-next-line:max-line-length
-            this.data.push({employee: {firstName: faker.name.firstName(), lastName: faker.name.lastName(), country: {code: 'MEX', population: 'some'}}, payment: {grossAmount: faker.random.number(2000)}});
+            this.data.push({employee: {firstName: faker.name.firstName(), lastName: faker.name.lastName(), country: {code: 'MEX', population: 'some'}}, birthDate: faker.date.past(), payment: {grossAmount: faker.random.number(2000)}});
         }
-
         // this.factory = this.resolver.resolveComponentFactory(EditResultComponent);
     }
 
