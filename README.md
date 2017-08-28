@@ -61,6 +61,7 @@ export class AppModule {}
 
 Import the SdcTableComponent within the component that will use it:
 ``` import { SdcTableComponent } from 'sdc-table.component'; ```
+``` import { ColumnWithProperties } from 'table.objects'; ``` (INCORRECT, UPDATE ME)
 
 The selector is: ``` <sdc-table><sdc-table> ```
 
@@ -72,7 +73,7 @@ The SdcTableComponent takes the following inputs:
 // Pass in the component factory of the child component you wish to render in dropdowns/modals
 @Input() private factory: any;
 // Information for columns
-@Input() private columnData: Array<ColumnInfo>;
+@Input() private columnInfo: Array<ColumnWithProperties>;
 // Table Data Objects for display (i.e. the thing you want displayed)
 @Input() private displayObjects: Array<{[key: string]: any}>;
 // Table properties
@@ -80,9 +81,9 @@ The SdcTableComponent takes the following inputs:
 
 ```
 
-The ColumnInfo object containts all the information needed to display the appropriate fields within the table. The table properties object used to define table behaviour.
+The ColumnWithProperties object contains all the information needed to display the appropriate fields within the table. The table properties object used to define table behaviour.
 
-__PLEASE NOTE:__ The SdcTableComponent will accept any kind of object, no matter how nested or complex as long as the appropriate keys are referenced within the Array of ColumnInfo objects.
+__PLEASE NOTE:__ The SdcTableComponent will accept any kind of object, no matter how nested or complex as long as the appropriate keys are referenced within the Array of ColumnWithProperties objects.
 
 Object Reference: 
 ```javascript
@@ -116,7 +117,7 @@ export class TableProperties {
     inlineEditing?: boolean;
 }
 
-export class ColumnInfo {
+export class ColumnWithProperties {
     public heading: string; // The table column heading to be displayed
     public sortable?: boolean; // If this column is sortable
     public filterable?: boolean;
@@ -155,7 +156,7 @@ export class ModalOptions {
 }
 ```
 
-__PLEASE NOTE:__ ColumnInfo.key is a very important property. Please populate it with the key-path to the value you would like displayed. For example, if you pass in an array of Car objects and want to a column to display the data found int Car.engine.parts.piston ColumnInfo.key should be populated with 'engine.parts.piston' NOTE THAT Car is omitted! Giving it the value of 'piston' will only display Car.piston values if they exist. If this key is left blank every single key:value within the object will be displayed.
+__PLEASE NOTE:__ ColumnWithProperties.key is a very important property. Please populate it with the key-path to the value you would like displayed. For example, if you pass in an array of Car objects and want to a column to display the data found int Car.engine.parts.piston ColumnWithProperties.key should be populated with 'engine.parts.piston' NOTE THAT Car is omitted! Giving it the value of 'piston' will only display Car.piston values if they exist. If this key is left blank every single key:value within the object will be displayed.
 
 ### Outputs
 Work is being completed on outputing more events, currently only two event is returned, the updated object and the index at which it is located, a button click event.

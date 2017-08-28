@@ -4,11 +4,13 @@
   flex-direction: column; 
   max-height: 500px;
   min-width: 300px; 
-} 
+}
 
 md-input-container.mat-input-container{
+  width: 100%;
+  padding-left: 32px;
   margin-left: 0;
-  width: 50%;
+  box-sizing: border-box;
 }
 
 md-row{
@@ -55,4 +57,8 @@ md-cell.hoverable:hover{
 
 .cell-input {
   margin: 0;
+}
+
+.default-hover-background-color{
+  background-color: lightgrey;
 }

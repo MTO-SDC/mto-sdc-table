@@ -28,7 +28,8 @@ export class TableProperties {
     inlineEditing?: boolean;
 }
 
-export class ColumnData {
+export class ColumnWithProperties {
+    public isSumColumn?: { columnsToSum: string[], title?: string } | false;
     public heading?: string;
     public sortable?: boolean;
     public filterable?: boolean;
@@ -42,7 +43,10 @@ export class ColumnData {
         date?: {param1?: string} | boolean;
         percent?: {param1?: string} | boolean;
     };
-    public hoverable?: { backgroundColor: string } | false;
+    public hoverable?: { backgroundColor: string } | boolean;
+    public buttonTitle?: string;
+    public iconBefore?: string;
+    public iconAfter?: string;
     public button?: boolean;
     public mdButton?: boolean;
     public mdRaisedButton?: boolean;
@@ -50,6 +54,12 @@ export class ColumnData {
     public mdMiniFab?: boolean;
     public key?: string;
     public openCustomComponent?: boolean;
+    public showSum?: { title: string } | boolean;
+
+    constructor(obj) {
+        this.filterable = true;
+        Object.assign(this, obj);
+    }
 }
 
 export class ModalOptions {

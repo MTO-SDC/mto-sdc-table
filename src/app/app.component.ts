@@ -1,3 +1,4 @@
+import { ColumnWithProperties } from './table/table-component/table.objects';
 import { Component, ComponentFactoryResolver } from '@angular/core';
 
 @Component({
@@ -7,15 +8,17 @@ import { Component, ComponentFactoryResolver } from '@angular/core';
 })
 export class AppComponent {
   public factory: any;
-    public headings = [
-        {heading: 'First Name', sortable: true, filterable: true, key: 'employee.firstName', hoverable: {backgroundColor: '#CCC'}},
-        {heading: 'Last Name', sortable: true, filterable: true, key: 'employee.lastName', hoverable: {backgroundColor: '#CCC'} },
-        {heading: 'Address', key: 'employee.addressLine1', hoverable: {backgroundColor: '#CCC'}}, // , select: {options: [1, 2, 3, 4, 5]
-        {heading: 'Payment Gross Amount', key: 'payment.grossAmount', pipeOptions: {currency: true, custom: (value) => value * 10}, hoverable: {backgroundColor: '#CCC'}},
-        {buttonTitle: 'More Info', button: true, openCustomComponent: true, iconBefore: 'accessibility', iconAfter: 'home'},
-        {buttonTitle: '', button: true, mdButton: true, iconBefore: 'home'}
+    public columns: ColumnWithProperties[] = [
+        new ColumnWithProperties({heading: 'First Name', sortable: true, key: 'employee.firstName', hoverable: true}),
+        new ColumnWithProperties({heading: 'Last Name', sortable: true, key: 'employee.lastName', hoverable: true }),
+        new ColumnWithProperties({heading: 'Address', key: 'employee.addressLine1', hoverable: true}), // , select: {options: [1, 2, 3, 4, 5]
+        new ColumnWithProperties({heading: 'Payment Gross Amount', key: 'payment.grossAmount', pipeOptions: {currency: true}, hoverable: true, showSum: true}),
+        new ColumnWithProperties({heading: 'Payment Net Amount', key: 'payment.netAmount', hoverable: true, showSum: { title: 'Final:' }, filterable: false}),
+        new ColumnWithProperties({buttonTitle: 'More Info', button: true, openCustomComponent: true, iconBefore: 'accessibility', iconAfter: 'home'}),
+        new ColumnWithProperties({buttonTitle: '', button: true, mdButton: true, iconBefore: 'home'}),
+        new ColumnWithProperties({heading: 'Total', isSumColumn: { columnsToSum: ['payment.grossAmount', 'payment.netAmount'] }, pipeOptions: {currency: true}, sortable: true})
     ];
-    public headingsBasic = [
+    public columnsBasic = [
         {heading: 'First Name', key: 'employee.firstName'},
         {heading: 'Last Name', key: 'employee.lastName' },
         {heading: 'Address', key: 'employee.addressLine1'},
@@ -44,7 +47,7 @@ export class AppComponent {
         // tslint:disable-next-line:forin
         for (let i = 0; i < 5; i++) {
             // this.data.push(TestObjectsService.getTestResult());
-            this.data.push({employee: {firstName: 'mark', lastName: 'joaquim', addressLine1: 'addr'}, payment: {grossAmount: 1337}});
+            this.data.push({employee: {firstName: 'mark', lastName: 'joaquim', addressLine1: 'addr'}, payment: {grossAmount: 1337, netAmount: 500}});
         }
 
         // this.factory = this.resolver.resolveComponentFactory(EditResultComponent);
