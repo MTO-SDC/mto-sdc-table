@@ -220,8 +220,9 @@ ColumnData {
 
 ## Authors
 
-* **Robert Skakic** - *Initial work*
 * **Mark Joaquim** - *Initial work*
+* **Robert Skakic** - *Initial work*
+* **Lukas Rossi** - *Initial work*
 
 __Questions/Comments/Concerns/Advice/Ideas/Bored?__ \
 Please email: sdc.table@gmail.com
