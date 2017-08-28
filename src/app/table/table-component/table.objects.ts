@@ -47,6 +47,7 @@ export class ColumnWithProperties {
     public buttonTitle?: string;
     public iconBefore?: string;
     public iconAfter?: string;
+    public select?: Array<{value?: any, view: string}>;
     public button?: boolean;
     public mdButton?: boolean;
     public mdRaisedButton?: boolean;
@@ -55,6 +56,9 @@ export class ColumnWithProperties {
     public key?: string;
     public openCustomComponent?: boolean;
     public showSum?: { title: string } | boolean;
+    public datepicker?: boolean;
+    public minDate?: Date;
+    public maxDate?: Date;
 
     constructor(obj) {
         this.filterable = true;

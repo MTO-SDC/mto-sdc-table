@@ -58,7 +58,6 @@ export class SdcTableComponent implements OnInit {
 
     // OnInit
     public ngOnInit(): void {
-
         if (this.columnInfo) {
             this.columnInfo.forEach(column => {
                 if (!column.key) {
@@ -122,7 +121,16 @@ export class SdcTableComponent implements OnInit {
                     field[splitkeys[j]] ? field =  field[splitkeys[j]] : field = undefined;
                 }
 
-                processedObject[column.key] = field;
+                if (column.select && column.select[0].view && column.select[0].value) {
+                    for (const option of column.select) {
+                        if (JSON.stringify(option.value) === JSON.stringify(field)) {
+                            processedObject[column.key] = option.view;
+                            break;
+                        }
+                    }
+                } else {
+                    processedObject[column.key] = field;
+                }
             });
             processedArray.push(processedObject);
         }
@@ -272,8 +280,30 @@ export class SdcTableComponent implements OnInit {
         }
     }
 
-    private cellBlurred(updateValue: any, row: any, column: ColumnWithProperties): void {
+    private inlineCellValueUpdate(updateValue: any, row: any, column: ColumnWithProperties): void {
         column.editing = null;
+        this.change.emit({
+            data: this.updateObjectField(this.displayObjects[row[this.uniqueKey]], column.key, updateValue),
+            index: row[this.uniqueKey]
+        });
+        this.mdTableData.setData(this.generateDataSource(this.displayObjects, this.columnInfo));
+    }
+
+    private selectCellValueUpdate(updateValue: any, row: any, column: ColumnWithProperties): void {
+        for (const option of column.select) {
+            if (option.value && updateValue === option.view) {
+                updateValue = option.value;
+                break;
+            }
+        }
+        this.change.emit({
+            data: this.updateObjectField(this.displayObjects[row[this.uniqueKey]], column.key, updateValue),
+            index: row[this.uniqueKey]
+        });
+        this.mdTableData.setData(this.generateDataSource(this.displayObjects, this.columnInfo));
+    }
+
+    private dateCellValueUpdate(updateValue: any, row, column: ColumnWithProperties): void {
         this.change.emit({
             data: this.updateObjectField(this.displayObjects[row[this.uniqueKey]], column.key, updateValue),
             index: row[this.uniqueKey]

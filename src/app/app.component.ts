@@ -1,5 +1,6 @@
 import { ColumnWithProperties } from './table/table-component/table.objects';
 import { Component, ComponentFactoryResolver } from '@angular/core';
+const faker = require('faker');
 
 @Component({
   selector: 'sdc-root',
@@ -11,7 +12,7 @@ export class AppComponent {
     public columns: ColumnWithProperties[] = [
         new ColumnWithProperties({heading: 'First Name', sortable: true, key: 'employee.firstName', hoverable: true}),
         new ColumnWithProperties({heading: 'Last Name', sortable: true, key: 'employee.lastName', hoverable: true }),
-        new ColumnWithProperties({heading: 'Address', key: 'employee.addressLine1', hoverable: true}), // , select: {options: [1, 2, 3, 4, 5]
+        // new ColumnWithProperties({heading: 'Address', key: 'employee.addressLine1', hoverable: true}), // , select: {options: [1, 2, 3, 4, 5]
         new ColumnWithProperties({heading: 'Payment Gross Amount', key: 'payment.grossAmount', pipeOptions: {currency: true}, hoverable: true, showSum: true}),
         new ColumnWithProperties({heading: 'Payment Net Amount', key: 'payment.netAmount', hoverable: true, showSum: { title: 'Final:' }, filterable: false}),
         new ColumnWithProperties({buttonTitle: 'More Info', button: true, openCustomComponent: true, iconBefore: 'accessibility', iconAfter: 'home'}),
@@ -26,9 +27,9 @@ export class AppComponent {
     ];
     public data: any[] = new Array<any>();
     private tableProperties = {
-        accordian: true,
+        // accordian: true,
         // modal: true,
-        inlineEditing: true,
+        // inlineEditing: true,
         pagination: {
             supported: true,
             itemsPerPage: 4,
@@ -47,9 +48,8 @@ export class AppComponent {
         // tslint:disable-next-line:forin
         for (let i = 0; i < 5; i++) {
             // this.data.push(TestObjectsService.getTestResult());
-            this.data.push({employee: {firstName: 'mark', lastName: 'joaquim', addressLine1: 'addr'}, payment: {grossAmount: 1337, netAmount: 500}});
+            this.data.push({employee: {firstName: faker.name.firstName(), lastName: faker.name.lastName(), country: {code: 'MEX', population: 'some'}}, birthDate: faker.date.past(), payment: {grossAmount: faker.random.number(2000), netAmount: faker.random.number(2000)}});
         }
-
         // this.factory = this.resolver.resolveComponentFactory(EditResultComponent);
     }
 

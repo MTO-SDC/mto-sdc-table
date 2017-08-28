@@ -131,6 +131,7 @@ export class ColumnWithProperties {
         date?: {param1: string} | boolean;
         percent?: {param1: string} | boolean;
     };
+    public select?: Array<{value?: any, view: string}>; // if cells should be dropdown selectors put the options and corresponding values here
     // Button options
     public button?: boolean; 
     public mdButton?: boolean;
@@ -138,6 +139,9 @@ export class ColumnWithProperties {
     public mdFab: boolean?;
     public mdMiniFab?: boolean;
     public key?: string; // The key within the object that the column is to display
+    public datepicker?: boolean; // is cell a date object that should have a datepicker
+    public minDate?: Date; // minimum date selectable
+    public maxDate?: Date; // maximum date selectable
 }
 
 export class ModalOptions {
@@ -191,10 +195,35 @@ changes will be emitted to change in the following object
 }
 ```
 
+### Using Select dropdowns in cells
+
+To bind a property of the row object to an md-select style select menu simply format the ColumnData object that you want to appear as a select component like the following
+```javascript
+ColumnData {
+    heading: "Country", // heading title as per usual
+    key: "user.country", // key in the object to reflect
+    select: [ // array of options to display, can take multiple forms
+        {value: {name: 'Canada', abbreviation: 'CAN', population: 36000000}, view: 'Canada'}, // display the option 'Canada' but update object.user.country to the object in value
+        {value: {name: 'United States of America', abbreviation: 'USA', population: 326000000}, view: 'United States'}
+    ]
+}
+```
+
+__Note:__ if you don't need a more complex object to be bound to the field than just a string or number you can simply make select an array of strings and every thing will work as expected.
+
+```javascript
+ColumnData {
+    heading: "Country",
+    key: "user.countryString",
+    select: ['Canada', 'United States']
+}
+```
+
 ## Authors
 
-* **Robert Skakic** - *Initial work*
 * **Mark Joaquim** - *Initial work*
+* **Robert Skakic** - *Initial work*
+* **Lukas Rossi** - *Initial work*
 
 __Questions/Comments/Concerns/Advice/Ideas/Bored?__ \
 Please email: sdc.table@gmail.com
