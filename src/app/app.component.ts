@@ -1,4 +1,5 @@
 import { Component, ComponentFactoryResolver } from '@angular/core';
+const faker = require('faker');
 
 @Component({
   selector: 'sdc-root',
@@ -10,7 +11,15 @@ export class AppComponent {
     public headings = [
         {heading: 'First Name', sortable: true, filterable: true, key: 'employee.firstName'},
         {heading: 'Last Name', sortable: true, filterable: true, key: 'employee.lastName' },
-        {heading: 'Address', key: 'employee.addressLine1'}, // , select: {options: [1, 2, 3, 4, 5]
+        {
+            heading: 'Country', key: 'employee.country', sortable: true, filterable: true,
+            select: [
+                {value: {code: 'CAN', population: 'lots'}, view: 'Canada'},
+                {value: {code: 'USA', population: 'more'}, view: 'United States'},
+                {value: {code: 'PHI', population: '10'}, view: 'Phillipines'},
+                {value: {code: 'MEX', population: 'some'}, view: 'Mexico'}
+            ]
+        },
         {heading: 'Payment Gross Amount', key: 'payment.grossAmount', pipeOptions: {currency: true, custom: (value) => value * 10}},
         {buttonTitle: 'More Info', button: true, modalOrDropdown: true, iconBefore: 'accessibility', iconAfter: 'home'},
         {buttonTitle: '', button: true, mdButton: true, iconBefore: 'home'}
@@ -24,7 +33,7 @@ export class AppComponent {
     public data: any[] = new Array<any>();
     private tableProperties = {
         // accordian: true,
-        modal: true,
+        // modal: true,
         // inlineEditing: true,
         pagination: {
             supported: true,
@@ -44,7 +53,8 @@ export class AppComponent {
         // tslint:disable-next-line:forin
         for (let i = 0; i < 5; i++) {
             // this.data.push(TestObjectsService.getTestResult());
-            this.data.push({employee: {firstName: 'mark', lastName: 'joaquim', addressLine1: 'addr'}, payment: {grossAmount: 1337}});
+            // tslint:disable-next-line:max-line-length
+            this.data.push({employee: {firstName: faker.name.firstName(), lastName: faker.name.lastName(), country: {code: 'MEX', population: 'some'}}, payment: {grossAmount: faker.random.number(2000)}});
         }
 
         // this.factory = this.resolver.resolveComponentFactory(EditResultComponent);

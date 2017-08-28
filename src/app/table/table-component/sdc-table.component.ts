@@ -59,7 +59,6 @@ export class SdcTableComponent implements OnInit {
 
     // OnInit
     public ngOnInit(): void {
-        console.log(this.paginator);
         if (this.columnInfo) {
             this.columnInfo.forEach(column => {
                 if (!column.key) {
@@ -121,7 +120,17 @@ export class SdcTableComponent implements OnInit {
                 for ( let j = 0; j < splitkeys.length; j++ ) {
                     field[splitkeys[j]] ? field =  field[splitkeys[j]] : field = 'undefined';
                 }
-                processedObject[column.key] = field;
+
+                if (column.select && column.select[0].view && column.select[0].value) {
+                    for (const option of column.select) {
+                        if (JSON.stringify(option.value) === JSON.stringify(field)) {
+                            processedObject[column.key] = option.view;
+                            break;
+                        }
+                    }
+                } else {
+                    processedObject[column.key] = field;
+                }
             });
             processedArray.push(processedObject);
         }
@@ -271,8 +280,22 @@ export class SdcTableComponent implements OnInit {
         }
     }
 
-    private cellBlurred(updateValue: any, row: any, column: ColumnData): void {
+    private inlineCellValueUpdate(updateValue: any, row: any, column: ColumnData): void {
         column.editing = null;
+        this.change.emit({
+            data: this.updateObjectField(this.displayObjects[row[this.uniqueKey]], column.key, updateValue),
+            index: row[this.uniqueKey]
+        });
+        this.mdTableData.setData(this.generateDataSource(this.displayObjects, this.columnInfo));
+    }
+
+    private selectCellValueUpdate(updateValue: any, row: any, column: ColumnData): void {
+        for (const option of column.select) {
+            if (option.value && updateValue === option.view) {
+                updateValue = option.value;
+                break;
+            }
+        }
         this.change.emit({
             data: this.updateObjectField(this.displayObjects[row[this.uniqueKey]], column.key, updateValue),
             index: row[this.uniqueKey]

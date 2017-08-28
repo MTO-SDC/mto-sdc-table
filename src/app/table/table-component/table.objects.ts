@@ -42,6 +42,7 @@ export class ColumnData {
         date?: {param1?: string} | boolean;
         percent?: {param1?: string} | boolean;
     };
+    public select?: Array<{value?: any, view: string}>;
     public button?: boolean;
     public mdButton?: boolean;
     public mdRaisedButton?: boolean;

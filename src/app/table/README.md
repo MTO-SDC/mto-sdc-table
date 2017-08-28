@@ -116,7 +116,7 @@ export class TableProperties {
     inlineEditing?: boolean;
 }
 
-export class ColumnInfo {
+export class ColumnData {
     public heading: string; // The table column heading to be displayed
     public sortable?: boolean; // If this column is sortable
     public filterable?: boolean;
@@ -130,6 +130,7 @@ export class ColumnInfo {
         date?: {param1: string} | boolean;
         percent?: {param1: string} | boolean;
     };
+    public select?: Array<{value?: any, view: string}>; // if cells should be dropdown selectors put the options and corresponding values here
     // Button options
     public button?: boolean; 
     public mdButton?: boolean;
@@ -187,6 +188,30 @@ changes will be emitted to change in the following object
 {
     data: Object    // your updated objects
     index: numebr   // index in the input array that was edited
+}
+```
+
+### Using Select dropdowns in cells
+
+To bind a property of the row object to an md-select style select menu simply format the ColumnData object that you want to appear as a select component like the following
+```javascript
+ColumnData {
+    heading: "Country", // heading title as per usual
+    key: "user.country", // key in the object to reflect
+    select: [ // array of options to display, can take multiple forms
+        {value: {name: 'Canada', abbreviation: 'CAN', population: 36000000}, view: 'Canada'}, // display the option 'Canada' but update object.user.country to the object in value
+        {value: {name: 'United States of America', abbreviation: 'USA', population: 326000000}, view: 'United States'}
+    ]
+}
+```
+
+__Note:__ if you don't need a more complex object to be bound to the field than just a string or number you can simply make select an array of strings and every thing will work as expected.
+
+```javascript
+ColumnData {
+    heading: "Country",
+    key: "user.countryString",
+    select: ['Canada', 'United States']
 }
 ```
 
