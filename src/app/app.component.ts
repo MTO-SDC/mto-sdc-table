@@ -20,7 +20,7 @@ export class AppComponent {
                 {value: {code: 'MEX', population: 'some'}, view: 'Mexico'}
             ]
         },
-        {heading: 'Payment Gross Amount', key: 'payment.grossAmount', pipeOptions: {currency: true, custom: (value) => value * 10}},
+        {heading: 'Payment Gross Amount', key: 'payment.grossAmount', pipeOptions: {currency: true, custom: (value) => value * 10}, hoverable: {backgroundColor: '#CCC'}},
         {buttonTitle: 'More Info', button: true, modalOrDropdown: true, iconBefore: 'accessibility', iconAfter: 'home'},
         {buttonTitle: '', button: true, mdButton: true, iconBefore: 'home'}
     ];

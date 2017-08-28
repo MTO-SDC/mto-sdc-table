@@ -18,8 +18,8 @@
       <!-- HEADINGS/COLUMNS DEF - sortable  -->
       <ng-container *ngIf='column.sortable' [cdkColumnDef]='column.key'>
         <md-header-cell *cdkHeaderCellDef md-sort-header> {{column.heading}} </md-header-cell>
-        <md-cell *cdkCellDef="let row" (click)="cellClicked(row, column)">
-
+        
+        <md-cell *cdkCellDef="let row" (click)="cellClicked(row, column)" hover [hoverable]="column.hoverable">
           <span *ngIf="column.editing != row[uniqueKey] && !column.select"> {{row[column.key] | pipeJoin: column.pipeOptions}} </span>
 
           <md-input-container *ngIf="column.editing == row[uniqueKey] && !column.select" class="cell-input">
@@ -35,7 +35,7 @@
       <!-- HEADINGS/COLUMNS DEF - not sortable  -->
       <ng-container *ngIf='!column.sortable' [cdkColumnDef]='column.key'>
         <md-header-cell *cdkHeaderCellDef> {{column.heading}} </md-header-cell>
-        <md-cell *cdkCellDef="let row; let i = index" (click)="cellClicked(row, column)">
+        <md-cell *cdkCellDef="let row; let i = index" (click)="cellClicked(row, column)" hover [hoverable]="column.hoverable">
 
           <span *ngIf="column.editing != row[uniqueKey] && !column.button && !column.select"> {{row[column.key] | pipeJoin: column.pipeOptions}} </span>
 
@@ -47,38 +47,35 @@
             <md-option *ngFor="let option of column.select" [value]="option.view? option.view : option"> {{ option.view? option.view : option }} </md-option>
           </md-select>
 
-          <button *ngIf="column.button && (column.mdRaisedButton || (!column.mdButton && !column.mdFab && !column.mdMiniFab && !column.mdIconButton))" md-raised-button (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
+          <button *ngIf="column.button && (column.mdRaisedButton || (!column.mdButton && !column.mdFab && !column.mdMiniFab && !column.mdIconButton))" md-raised-button (click)="buttonClicked(i, row[uniqueKey], column)">
             <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
               {{column.buttonTitle}}
             <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
           </button>
 
-          <button *ngIf="column.button && column.mdMiniFab" md-mini-fab (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
-            <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
-            {{column.buttonTitle}}
-            <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
-          </button>
-
-        
-          <button *ngIf="column.button && column.mdFab" md-fab (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
-            <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
-            {{column.buttonTitle}}
-            <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
-          </button>
-      
-        
-          <button *ngIf="column.button && column.mdButton" md-button (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
+          <button *ngIf="column.button && column.mdMiniFab" md-mini-fab (click)="buttonClicked(i, row[uniqueKey], column)">
             <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
             {{column.buttonTitle}}
             <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
           </button>
         
-          <button *ngIf="column.button && column.mdIconButton" md-icon-button (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
+          <button *ngIf="column.button && column.mdFab" md-fab (click)="buttonClicked(i, row[uniqueKey], column)">
+            <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
+            {{column.buttonTitle}}
+            <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
+          </button>          
+        
+          <button *ngIf="column.button && column.mdButton" md-button (click)="buttonClicked(i, row[uniqueKey], column)">
             <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
             {{column.buttonTitle}}
             <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
           </button>
-
+        
+          <button *ngIf="column.button && column.mdIconButton" md-icon-button (click)="buttonClicked(i, row[uniqueKey], column)">
+            <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
+            {{column.buttonTitle}}
+            <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
+          </button>
         </md-cell>
       </ng-container>
     </ng-container>

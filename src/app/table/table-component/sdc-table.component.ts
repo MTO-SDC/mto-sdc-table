@@ -53,7 +53,7 @@ export class SdcTableComponent implements OnInit {
     private uniqueBtnKey: string = 'uniqueBtnKey';
     private hideModal: boolean = false;
     private focusEventEmitter = new EventEmitter<boolean>();
-    private buttonForDropdown: boolean = false;
+    private hasButtonForCustomComponent: boolean = false;
 
     constructor(public resolver: ComponentFactoryResolver, public changeDetectorRef: ChangeDetectorRef) {}
 
@@ -65,13 +65,15 @@ export class SdcTableComponent implements OnInit {
                     column.key = this.uniqueBtnKey;
                     this.uniqueBtnKey += 'xo';
                 }
+
+                if(column.openCustomComponent){
+                    this.hasButtonForCustomComponent = true;
+                }
+
                 this.displayedColumns.push(column.key);
                 if (column.filterable) {
                     this.hideFilterInput = false;
                     this.filterable.push(column.key);
-                }
-                if (column.modalOrDropdown) {
-                    this.buttonForDropdown = true;
                 }
             });
         } else if (this.displayObjects.length > 0) {
@@ -137,8 +139,8 @@ export class SdcTableComponent implements OnInit {
         return processedArray;
     }
 
-    buttonClicked(i: number, objId: number, modalOrDropdown: boolean) {
-        if (this.tableProperties && modalOrDropdown) {
+    buttonClicked(i: number, objId: number, column: ColumnData) {
+        if (this.tableProperties && column.openCustomComponent) {
             if (this.tableProperties.accordian) {
                 this.expandRow(i, objId);
             } else if (this.tableProperties.modal) {
@@ -154,7 +156,7 @@ export class SdcTableComponent implements OnInit {
      * @param {number} objId : unique id of object in rows.
      */
     private rowClicked(i: number, objId: number): void {
-        if (this.tableProperties && !this.buttonForDropdown) {
+        if (this.tableProperties && !this.hasButtonForCustomComponent) {
             if (this.tableProperties.accordian) {
                 this.expandRow(i, objId);
             } else if (this.tableProperties.modal) {

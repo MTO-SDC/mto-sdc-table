@@ -43,13 +43,14 @@ export class ColumnData {
         percent?: {param1?: string} | boolean;
     };
     public select?: Array<{value?: any, view: string}>;
+    public hoverable?: { backgroundColor: string } | false;
     public button?: boolean;
     public mdButton?: boolean;
     public mdRaisedButton?: boolean;
     public mdFab?: boolean;
     public mdMiniFab?: boolean;
-    public modalOrDropdown?: boolean;
     public key?: string;
+    public openCustomComponent?: boolean;
 }
 
 export class ModalOptions {
