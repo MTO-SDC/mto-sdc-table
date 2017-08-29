@@ -4,7 +4,7 @@
   <!-- FILTER  -->
   <div [hidden]="hideFilterInput" class="example-header">
     <md-input-container floatPlaceholder="never">
-      <!-- Filter Inoput  -->
+      <!-- Filter Input  -->
       <input mdInput #filter placeholder="Filter users" (input)="paginator.pageIndex = 0"> <!-- Send to first page on filtering -->
     </md-input-container>
   </div>
@@ -23,21 +23,35 @@
 
     <!--- NOTE: that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition. -->
-    <ng-container *ngFor='let column of columnInfo' flex>
+    <ng-container *ngFor='let column of columnInfo'>
       <!-- HEADINGS/COLUMNS DEF - sortable  -->
       <ng-container *ngIf='column.sortable' [cdkColumnDef]='column.key'>
         <md-header-cell *cdkHeaderCellDef md-sort-header> {{column.heading}} </md-header-cell>
         
         <md-cell *cdkCellDef="let row" (click)="cellClicked(row, column)" hover [hoverable]="column.hoverable">
-          <span *ngIf="column.editing != row[uniqueKey] && !column.select"> {{row[column.key] | pipeJoin: column.pipeOptions}} </span>
+          <ng-container *ngIf="!row.__sumRow">
+            <span *ngIf="column.editing != row[uniqueKey] && !column.select && !column.datePicker"> {{row[column.key] | pipeJoin: column.pipeOptions}} </span>
 
-          <md-input-container *ngIf="column.editing == row[uniqueKey] && !column.select" class="cell-input">
-            <input mdInput [value]="row[column.key]" [focus]="focusEventEmitter" (blur)="inlineCellValueUpdate($event.target.value, row, column)"/>
-          </md-input-container>
-          
-          <md-select *ngIf="column.select" class="cell-input" [value]="row[column.key]" (change)="selectCellValueUpdate($event.value, row, column)">
-            <md-option *ngFor="let option of column.select" [value]="option.view? option.view : option"> {{ option.view? option.view : option }} </md-option>
-          </md-select>
+            <md-input-container *ngIf="column.editing == row[uniqueKey] && !column.select && !column.datePicker" class="cell-input">
+              <input mdInput [value]="row[column.key]" [focus]="focusEventEmitter" (blur)="inlineCellValueUpdate($event.target.value, row, column)"/>
+            </md-input-container>
+            
+            <md-select *ngIf="column.select" class="cell-input" [value]="row[column.key]" (change)="selectCellValueUpdate($event.value, row, column)">
+              <md-option *ngFor="let option of column.select" [value]="option.view? option.view : option"> {{ option.view? option.view : option }} </md-option>
+            </md-select>
+            
+            <div *ngIf="column.datePicker">
+              <md-input-container>
+                  <input mdInput [mdDatepicker]="picker" [value]="row[column.key]" [min]="column.minDate" [max]="column.maxDate">
+              </md-input-container>
+              <md-datepicker-toggle mdSuffix [for]="picker"></md-datepicker-toggle>            
+              <md-datepicker (selectedChanged)="dateCellValueUpdate($event, row, column)" #picker></md-datepicker>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="row.__sumRow && row[column.key]">
+              <span>{{ column.showSum && column.showSum.title ? column.showSum.title : 'Total:' }} {{ row[column.key] | pipeJoin: column.pipeOptions }}</span>
+          </ng-container>
 
         </md-cell>
       </ng-container>
@@ -45,46 +59,63 @@
       <ng-container *ngIf='!column.sortable' [cdkColumnDef]='column.key'>
         <md-header-cell *cdkHeaderCellDef> {{column.heading}} </md-header-cell>
         <md-cell *cdkCellDef="let row; let i = index" (click)="cellClicked(row, column)" hover [hoverable]="column.hoverable">
+          <ng-container *ngIf="!row.__sumRow">
+            <span *ngIf="column.editing != row[uniqueKey] && !column.button && !column.select && !column.datePicker"> {{row[column.key] | pipeJoin: column.pipeOptions}} </span>
 
-          <span *ngIf="column.editing != row[uniqueKey] && !column.button && !column.select"> {{row[column.key] | pipeJoin: column.pipeOptions}} </span>
+            <md-input-container *ngIf="column.editing == row[uniqueKey] && !column.select && !column.datePicker" class="cell-input">
+              <input mdInput [value]="row[column.key]" [focus]="focusEventEmitter" (blur)="inlineCellValueUpdate($event.target.value, row, column)"/>
+            </md-input-container>
 
-          <md-input-container *ngIf="column.editing == row[uniqueKey] && !column.select" class="cell-input">
-            <input mdInput [value]="row[column.key]" [focus]="focusEventEmitter" (blur)="inlineCellValueUpdate($event.target.value, row, column)"/>
-          </md-input-container>
+            <md-select *ngIf="column.select" class="cell-input" [value]="row[column.key]" (change)="selectCellValueUpdate($event.value, row, column)">
+              <md-option *ngFor="let option of column.select" [value]="option.view? option.view : option"> {{ option.view? option.view : option }} </md-option>
+            </md-select>
 
-          <md-select *ngIf="column.select" class="cell-input" [value]="row[column.key]" (change)="selectCellValueUpdate($event.value, row, column)">
-            <md-option *ngFor="let option of column.select" [value]="option.view? option.view : option"> {{ option.view? option.view : option }} </md-option>
-          </md-select>
+            <div *ngIf="column.datePicker">
+              <md-input-container>
+                  <input mdInput [mdDatepicker]="picker" [value]="row[column.key]" [min]="column.minDate" [max]="column.maxDate">
+              </md-input-container>
+              <md-datepicker-toggle mdSuffix [for]="picker"></md-datepicker-toggle>            
+              <md-datepicker (selectedChanged)="dateCellValueUpdate($event, row, column)" #picker></md-datepicker>
+            </div>
 
-          <button *ngIf="column.button && (column.mdRaisedButton || (!column.mdButton && !column.mdFab && !column.mdMiniFab && !column.mdIconButton))" md-raised-button (click)="buttonClicked(i, row[uniqueKey], column)">
-            <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
+              <!-- <md-select *ngIf="column.editing == row[uniqueKey] && column.select" [focus]="focusEventEmitter" (onClose)="" class="cell-input">
+                <md-option *ngFor="let option of column.select.options" [value]="option"> {{ option }} </md-option>
+              </md-select> -->
+
+            <button *ngIf="column.button && (column.mdRaisedButton || (!column.mdButton && !column.mdFab && !column.mdMiniFab && !column.mdIconButton))" md-raised-button (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
+              <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
+                {{column.buttonTitle}}
+              <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
+            </button>
+
+            <button *ngIf="column.button && column.mdMiniFab" md-mini-fab (click)="buttonClicked(i, row[uniqueKey], column)">
+              <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
               {{column.buttonTitle}}
-            <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
-          </button>
+              <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
+            </button>
+          
+            <button *ngIf="column.button && column.mdFab" md-fab (click)="buttonClicked(i, row[uniqueKey], column)">
+              <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
+              {{column.buttonTitle}}
+              <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
+            </button>          
+          
+            <button *ngIf="column.button && column.mdButton" md-button (click)="buttonClicked(i, row[uniqueKey], column)">
+              <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
+              {{column.buttonTitle}}
+              <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
+            </button>
+          
+            <button *ngIf="column.button && column.mdIconButton" md-icon-button (click)="buttonClicked(i, row[uniqueKey], column)">
+              <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
+              {{column.buttonTitle}}
+              <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
+            </button>
+          </ng-container>
 
-          <button *ngIf="column.button && column.mdMiniFab" md-mini-fab (click)="buttonClicked(i, row[uniqueKey], column)">
-            <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
-            {{column.buttonTitle}}
-            <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
-          </button>
-        
-          <button *ngIf="column.button && column.mdFab" md-fab (click)="buttonClicked(i, row[uniqueKey], column)">
-            <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
-            {{column.buttonTitle}}
-            <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
-          </button>          
-        
-          <button *ngIf="column.button && column.mdButton" md-button (click)="buttonClicked(i, row[uniqueKey], column)">
-            <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
-            {{column.buttonTitle}}
-            <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
-          </button>
-        
-          <button *ngIf="column.button && column.mdIconButton" md-icon-button (click)="buttonClicked(i, row[uniqueKey], column)">
-            <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
-            {{column.buttonTitle}}
-            <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
-          </button>
+          <ng-container *ngIf="row.__sumRow && row[column.key]">
+              <span>{{ column.showSum && column.showSum.title ? column.showSum.title : 'Total:' }} {{ row[column.key] | pipeJoin: column.pipeOptions }}</span>
+          </ng-container>
         </md-cell>
       </ng-container>
     </ng-container>

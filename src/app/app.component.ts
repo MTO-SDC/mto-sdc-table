@@ -1,4 +1,4 @@
-import { TableProperties, ColumnData } from './table/table-component/table.objects';
+import { ColumnWithProperties } from './table/table-component/table.objects';
 import { Component, ComponentFactoryResolver } from '@angular/core';
 const faker = require('faker');
 
@@ -9,24 +9,17 @@ const faker = require('faker');
 })
 export class AppComponent {
   public factory: any;
-    public headings = [
-        {heading: 'First Name', sortable: true, filterable: true, key: 'employee.firstName'},
-        {heading: 'Last Name', sortable: true, filterable: true, key: 'employee.lastName' },
-        {
-            heading: 'Country', key: 'employee.country', sortable: true, filterable: true,
-            select: [
-                {value: {code: 'CAN', population: 'lots'}, view: 'Canada'},
-                {value: {code: 'USA', population: 'more'}, view: 'United States'},
-                {value: {code: 'PHI', population: '10'}, view: 'Phillipines'},
-                {value: {code: 'MEX', population: 'some'}, view: 'Mexico'}
-            ]
-        },
-        // tslint:disable-next-line:max-line-length
-        {heading: 'Payment Gross Amount', key: 'payment.grossAmount', pipeOptions: {currency: true, custom: (value) => value * 10}, hoverable: {backgroundColor: '#CCC'}},
-        {buttonTitle: 'More Info', button: true, modalOrDropdown: true, iconBefore: 'accessibility', iconAfter: 'home'},
-        {buttonTitle: '', button: true, mdButton: true, iconBefore: 'home'}
+    public columns: ColumnWithProperties[] = [
+        new ColumnWithProperties({heading: 'First Name', sortable: true, key: 'employee.firstName', hoverable: true}),
+        new ColumnWithProperties({heading: 'Last Name', sortable: true, key: 'employee.lastName', hoverable: true }),
+        // new ColumnWithProperties({heading: 'Address', key: 'employee.addressLine1', hoverable: true}), // , select: {options: [1, 2, 3, 4, 5]
+        new ColumnWithProperties({heading: 'Payment Gross Amount', key: 'payment.grossAmount', pipeOptions: {currency: true}, hoverable: true, showSum: true}),
+        new ColumnWithProperties({heading: 'Payment Net Amount', key: 'payment.netAmount', hoverable: true, showSum: { title: 'Final:' }, filterable: false}),
+        new ColumnWithProperties({buttonTitle: 'More Info', button: true, openCustomComponent: true, iconBefore: 'accessibility', iconAfter: 'home'}),
+        new ColumnWithProperties({buttonTitle: '', button: true, mdButton: true, iconBefore: 'home'}),
+        new ColumnWithProperties({heading: 'Total', isSumColumn: { columnsToSum: ['payment.grossAmount', 'payment.netAmount'] }, pipeOptions: {currency: true}, sortable: true})
     ];
-    public headingsBasic = [
+    public columnsBasic = [
         {heading: 'First Name', key: 'employee.firstName'},
         {heading: 'Last Name', key: 'employee.lastName' },
         {heading: 'Address', key: 'employee.addressLine1'},
@@ -66,10 +59,8 @@ export class AppComponent {
         // tslint:disable-next-line:forin
         for (let i = 0; i < 5; i++) {
             // this.data.push(TestObjectsService.getTestResult());
-            // tslint:disable-next-line:max-line-length
-            this.data.push({employee: {firstName: faker.name.firstName(), lastName: faker.name.lastName(), country: {code: 'MEX', population: 'some'}}, payment: {grossAmount: faker.random.number(2000)}});
+            this.data.push({employee: {firstName: faker.name.firstName(), lastName: faker.name.lastName(), country: {code: 'MEX', population: 'some'}}, birthDate: faker.date.past(), payment: {grossAmount: faker.random.number(2000), netAmount: faker.random.number(2000)}});
         }
-
         // this.factory = this.resolver.resolveComponentFactory(EditResultComponent);
     }
 

@@ -1,5 +1,5 @@
 import { SdcModalComponent } from './../modal/sdc-modal.component';
-import { TableProperties, ColumnData } from './table.objects';
+import { TableProperties, ColumnWithProperties } from './table.objects';
 // tslint:disable-next-line:max-line-length
 import { Component, Input, Output, OnInit, ViewChild, ViewChildren, TemplateRef, QueryList, ViewContainerRef, ComponentFactory, ElementRef, AfterViewInit, EventEmitter, ComponentFactoryResolver, ComponentRef, ChangeDetectorRef } from '@angular/core';
 import { DataSource } from '@angular/cdk/table';
@@ -31,7 +31,7 @@ function s2ab(s: string): ArrayBuffer {
 @Component({
     selector: 'sdc-table',
     templateUrl: './sdc-table.component.html',
-    styleUrls: ['./sdc-table.component.css']
+    styleUrls: ['./sdc-table.component.scss']
 })
 
 export class SdcTableComponent implements OnInit {
@@ -50,7 +50,7 @@ export class SdcTableComponent implements OnInit {
     // Child Component to expand
     @Input() private factory: any;
     // Data for table heading
-    @Input() private columnInfo: Array<ColumnData>;
+    @Input() private columnInfo: Array<ColumnWithProperties>;
     // Table Data
     @Input() private displayObjects: Array<{[key: string]: any}>;
     // Table properties
@@ -58,7 +58,6 @@ export class SdcTableComponent implements OnInit {
 
     // Var's
     private expandedRow: number;
-    private filterable: Array<string> = new Array<string>();
     private displayedColumns: Array<string> = new Array<string>();
     private mdTableData: ExampleDataSource;
     private hideFilterInput: boolean = true;
@@ -81,14 +80,14 @@ export class SdcTableComponent implements OnInit {
                     this.uniqueBtnKey += 'xo';
                 }
 
-                if(column.openCustomComponent){
+                if (column.openCustomComponent) {
                     this.hasButtonForCustomComponent = true;
                 }
 
                 this.displayedColumns.push(column.key);
+
                 if (column.filterable) {
                     this.hideFilterInput = false;
-                    this.filterable.push(column.key);
                 }
             });
         } else if (this.displayObjects.length > 0) {
@@ -100,9 +99,8 @@ export class SdcTableComponent implements OnInit {
             }
         }
 
-        this.mdTableData = new ExampleDataSource(this.paginator, this.sort, this.changeDetectorRef);
+        this.mdTableData = new ExampleDataSource(this.paginator, this.sort, this.changeDetectorRef, this.columnInfo);
         this.mdTableData.setData(this.generateDataSource(this.displayObjects, this.columnInfo));
-        this.mdTableData.setFilterable(this.filterable);
 
         Observable.fromEvent(this.filter.nativeElement, 'keyup')
             .debounceTime(150)
@@ -116,9 +114,9 @@ export class SdcTableComponent implements OnInit {
     /**
      * Function to generate the appropriate DataSource objects for the table
      * @param {Array<{[key: string]: any}} objArray
-     * @param {Array<ColumnData>} columnInfoArray
+     * @param {Array<ColumnWithProperties>} columnInfoArray
      */
-    private generateDataSource(objArray: Array<{[key: string]: any}>, columnInfoArray: Array<ColumnData>): Array<{[key: string]: any}> {
+    private generateDataSource(objArray: Array<{[key: string]: any}>, columnInfoArray: Array<ColumnWithProperties>): Array<{[key: string]: any}> {
         let processedArray: Array<{[key: string]: any}> = new Array<{[key: string]: any}>();
         // fill the processed array with objects based on their submitted ones and the desired columnInfo
         for ( let i = 0; i < objArray.length; i++ ) {
@@ -135,7 +133,7 @@ export class SdcTableComponent implements OnInit {
 
                 // find the value desired for each object using the column keys.
                 for ( let j = 0; j < splitkeys.length; j++ ) {
-                    field[splitkeys[j]] ? field =  field[splitkeys[j]] : field = 'undefined';
+                    field[splitkeys[j]] ? field =  field[splitkeys[j]] : field = undefined;
                 }
 
                 if (column.select && column.select[0].view && column.select[0].value) {
@@ -154,7 +152,7 @@ export class SdcTableComponent implements OnInit {
         return processedArray;
     }
 
-    buttonClicked(i: number, objId: number, column: ColumnData) {
+    buttonClicked(i: number, objId: number, column: ColumnWithProperties) {
         if (this.tableProperties && column.openCustomComponent) {
             if (this.tableProperties.accordian) {
                 this.expandRow(i, objId);
@@ -290,14 +288,14 @@ export class SdcTableComponent implements OnInit {
         return objectToUpdate[0];
     }
 
-    private cellClicked(row: any, column: ColumnData): void {
-        if (!column.button && ((this.tableProperties && this.tableProperties.inlineEditing) || column.editable)) {
+    private cellClicked(row: any, column: ColumnWithProperties): void {
+        if (!row.__sumRow && !column.isSumColumn && !column.button && ((this.tableProperties && this.tableProperties.inlineEditing) || column.editable)) {
             column.editing = row[this.uniqueKey];
             setTimeout(() => { this.focusEventEmitter.emit(true); }, 0);
         }
     }
 
-    private inlineCellValueUpdate(updateValue: any, row: any, column: ColumnData): void {
+    private inlineCellValueUpdate(updateValue: any, row: any, column: ColumnWithProperties): void {
         column.editing = null;
         this.change.emit({
             data: this.updateObjectField(this.displayObjects[row[this.uniqueKey]], column.key, updateValue),
@@ -306,7 +304,7 @@ export class SdcTableComponent implements OnInit {
         this.mdTableData.setData(this.generateDataSource(this.displayObjects, this.columnInfo));
     }
 
-    private selectCellValueUpdate(updateValue: any, row: any, column: ColumnData): void {
+    private selectCellValueUpdate(updateValue: any, row: any, column: ColumnWithProperties): void {
         for (const option of column.select) {
             if (option.value && updateValue === option.view) {
                 updateValue = option.value;
@@ -377,7 +375,14 @@ export class SdcTableComponent implements OnInit {
      * Function to generate the Array of Arrays that XLSX requires to create an excel sheet
      */
     private generateAOA(): AOA {
-        
+    }
+
+    private dateCellValueUpdate(updateValue: any, row, column: ColumnWithProperties): void {
+        this.change.emit({
+            data: this.updateObjectField(this.displayObjects[row[this.uniqueKey]], column.key, updateValue),
+            index: row[this.uniqueKey]
+        });
+        this.mdTableData.setData(this.generateDataSource(this.displayObjects, this.columnInfo));
     }
 }
 
@@ -395,22 +400,20 @@ export class ExampleDataSource extends DataSource<any> {
 
     // public data: any;
     public tableLength: number = 0;
-    private filterable: Array<string>;
     filterChange = new BehaviorSubject('');
     get filter(): string { return this.filterChange.value; }
     set filter(filter: string) { this.filterChange.next(filter); }
 
-    constructor(private paginator: MdPaginator, private sort: MdSort, public changeDetectorRef: ChangeDetectorRef) {
+    private columnDataArray: ColumnWithProperties[];
+
+    constructor(private paginator: MdPaginator, private sort: MdSort, public changeDetectorRef: ChangeDetectorRef, private columnDataArrayInput: ColumnWithProperties[]) {
         super();
+        this.columnDataArray = columnDataArrayInput;
     }
 
     setData(data) {
         this.dataChange.next(data);
         this.changeDetectorRef.detectChanges();
-    }
-
-    setFilterable(filterable) {
-        this.filterable = filterable;
     }
 
     /** Connect function called by the table to retrieve one stream containing the data to render. */
@@ -423,21 +426,71 @@ export class ExampleDataSource extends DataSource<any> {
         ];
 
         return Observable.merge(...displayDataChanges).map(() => {
-            let returnValue = this.getSortedData().filter((item) => {
-                let searchStr: string = '';
-                // tslint:disable-next-line:forin
-                for (let key in item) {
-                    if (this.filterable && this.filterable.indexOf(key) !== -1) {
-                        searchStr += ('' + item[key]).toLowerCase();
+            const columnSums = {};
+            let updatedTableRows = this.getSortedData().filter((item) => {
+                if (this.filter === '') {
+                    return true;
+                }
+
+                for (const key in item) {
+                    if (item.hasOwnProperty(key)) {
+                        const columnSettings: ColumnWithProperties = this.columnDataArray.filter(currentItem => currentItem.key === key)[0];
+
+                        if (columnSettings && columnSettings.filterable) {
+
+                            if (('' + item[key]).toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) {
+                                return true;
+                            }
+
+                            // Also filter by the value after the pipe
+                            if (columnSettings.pipeOptions) {
+                                const resultAfterPipe = new PipeJoin().transform(item[key], columnSettings.pipeOptions);
+
+                                if (resultAfterPipe.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) {
+                                    return true;
+                                }
+                            }
+
+                        }
                     }
                 }
-                return searchStr.indexOf(this.filter.toLowerCase()) !== -1;
+
+                return false;
             });
-            this.tableLength = returnValue.length;
-            if (this.paginator) {
-                returnValue = returnValue.splice(this.paginator.pageIndex * this.paginator.pageSize, this.paginator.pageSize);
+
+            for (const updatedTableRow of updatedTableRows) {
+                for (const rowKey in updatedTableRow) {
+                    if (updatedTableRow.hasOwnProperty(rowKey)) {
+                        // COLUMN SUM: Add this number to the sum
+                        const columnSettings: ColumnWithProperties = this.columnDataArray.filter(item => item.key === rowKey)[0];
+                        if (columnSettings && columnSettings.showSum) {
+                            columnSums[columnSettings.key] = columnSums[columnSettings.key] || 0; // Initialize to 0 if necessary
+                            columnSums[columnSettings.key] += Number(updatedTableRow[rowKey]);
+                        }
+
+                        // ROW SUM: Sum all specified columns
+                        if (columnSettings && columnSettings.isSumColumn) {
+                            updatedTableRow[rowKey] = 0;
+                            for (const columnToSum of columnSettings.isSumColumn.columnsToSum) {
+                                updatedTableRow[rowKey] += Number(updatedTableRow[columnToSum]);
+                            }
+                        }
+                    }
+                }
             }
-            return returnValue;
+
+            this.tableLength = updatedTableRows.length;
+            if (this.paginator) {
+                updatedTableRows = updatedTableRows.splice(this.paginator.pageIndex * this.paginator.pageSize, this.paginator.pageSize);
+            }
+
+            // At least one COLUMN sum, so add a new row to the table
+            if (Object.keys(columnSums).length > 0) {
+                columnSums['__sumRow'] = true;
+                updatedTableRows.push(columnSums);
+            }
+
+            return updatedTableRows;
         });
     }
 
@@ -454,8 +507,8 @@ export class ExampleDataSource extends DataSource<any> {
 
             [propertyA, propertyB] = [a[this.sort.active], b[this.sort.active]];
 
-            let valueA = isNaN(+propertyA) ? propertyA : +propertyA;
-            let valueB = isNaN(+propertyB) ? propertyB : +propertyB;
+            const valueA = isNaN(+propertyA) ? propertyA : +propertyA;
+            const valueB = isNaN(+propertyB) ? propertyB : +propertyB;
 
             return (valueA < valueB ? -1 : 1) * (this.sort.direction === 'asc' ? 1 : -1);
         });
