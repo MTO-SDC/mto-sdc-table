@@ -56,3 +56,17 @@ md-cell.hoverable:hover{
 .cell-input {
   margin: 0;
 }
+
+.btnRight {
+  float: right;
+  right: 0.3em;
+}
+
+.btnLeft {
+  float: left;
+  left: 0.3em;
+}
+
+.btnBottom {
+  margin-bottom: 0.4em; 
+}

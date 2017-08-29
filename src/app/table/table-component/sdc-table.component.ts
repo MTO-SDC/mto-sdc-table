@@ -7,6 +7,8 @@ import { MdPaginator, MdSort, MdDialog } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { PipeJoin } from './../pipe-join/sdc-pipe-join.pipe';
+import { saveAs } from 'file-saver';
+import * as XLSX from 'xlsx';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
@@ -14,6 +16,17 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/observable/fromEvent';
+
+type AOA = Array<Array<any>>;
+
+function s2ab(s: string): ArrayBuffer {
+    const buf = new ArrayBuffer(s.length);
+    const view = new Uint8Array(buf);
+    for (let i = 0; i !== s.length; i++) {
+        view[i] = s.charCodeAt(i) & 0xFF;
+    }
+    return buf;
+}
 
 @Component({
     selector: 'sdc-table',
@@ -54,6 +67,8 @@ export class SdcTableComponent implements OnInit {
     private hideModal: boolean = false;
     private focusEventEmitter = new EventEmitter<boolean>();
     private hasButtonForCustomComponent: boolean = false;
+    private wopts: XLSX.WritingOptions = { bookType: 'xlsx', type: 'binary'};
+    private data: AOA = [[1, 2], [3, 4]];
 
     constructor(public resolver: ComponentFactoryResolver, public changeDetectorRef: ChangeDetectorRef) {}
 
@@ -303,6 +318,66 @@ export class SdcTableComponent implements OnInit {
             index: row[this.uniqueKey]
         });
         this.mdTableData.setData(this.generateDataSource(this.displayObjects, this.columnInfo));
+    }
+
+    /**
+     * Function to export tableInformation to excel
+     */
+    private exportTable(evt: any): void {
+        // generate the date to export to excel
+        const dataArrays: AOA = this.generateAOA();
+        // generate the worksheet
+        const ws = XLSX.utils.aoa_to_sheet(this.data);
+
+        // generate teh workbook and add the worksheet
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+        // Save to file
+        const wbout = XLSX.write(wb, this.wopts);
+
+        // Check that the filename is appropriately passed
+        let checkedFileName: string = this.tableProperties.export.fileName;
+        if (checkedFileName) {
+            const splitName: Array<string> = checkedFileName.split('.');
+            if (splitName[splitName.length] !== 'xlsx') {
+                checkedFileName = checkedFileName + '.xlsx';
+            }
+        } else {
+            const date = new Date();
+            // tslint:disable-next-line:max-line-length
+            checkedFileName =  'Output-' + date.getDay() + '-' + date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear() + '-' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '.xlsx';
+        }
+        const fileName = checkedFileName;
+
+        console.log(fileName);
+        saveAs(new Blob([s2ab(wbout)]), fileName);
+
+        // const target: DataTransfer = <DataTransfer>(evt.target);
+        // if (target.files.length !== 1) { throw new Error('Cannot upload multiple files on the on the entry'); }
+
+        // const reader = new FileReader();
+        // reader.onload = (e: any) => {
+        //     // read workbook
+        //     const bstr = e.target.result;
+        //     const wb = XLSX.read(bstr, {type: 'binary'});
+
+        //     // grab the first sheet
+        //     const wsname = wb.SheetNames[0];
+        //     const ws = wb.Sheets[wsname];
+
+        //     // save the data
+        //     this.data = <AOA>(XLSX.utils.sheet_to_json(ws, {header: 1}));
+        // };
+
+        // reader.readAsBinaryString(target.files[0]);
+    }
+
+    /**
+     * Function to generate the Array of Arrays that XLSX requires to create an excel sheet
+     */
+    private generateAOA(): AOA {
+        
     }
 }
 

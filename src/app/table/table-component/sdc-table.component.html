@@ -9,6 +9,15 @@
     </md-input-container>
   </div>
 
+   <!-- EXPORT BUTTON UPPER LEFT/RIGHT -->
+  <div *ngIf="tableProperties.export.toExcel && (tableProperties.export.buttonOptions.position === 'upper-left' || tableProperties.export.buttonOptions.position === 'upper-right')">
+    <button md-button (click)="exportTable()" *ngIf="tableProperties.export.buttonOptions.type === 'md-button'" [ngClass]="tableProperties.export.buttonOptions.position === 'upper-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.export.buttonOptions.icon">{{tableProperties.export.buttonOptions.icon}}</md-icon> &nbsp; {{tableProperties.export.buttonOptions.text}}</button>
+    <button md-raised-button (click)="exportTable()" *ngIf="tableProperties.export.buttonOptions.type === 'md-raised-button'" [ngClass]="tableProperties.export.buttonOptions.position === 'upper-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.export.buttonOptions.icon">{{tableProperties.export.buttonOptions.icon}}</md-icon> &nbsp; {{tableProperties.export.buttonOptions.text}}</button>
+    <button md-fab (click)="exportTable()" *ngIf="tableProperties.export.buttonOptions.type === 'md-fab'" [ngClass]="tableProperties.export.buttonOptions.position === 'upper-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.export.buttonOptions.icon">{{tableProperties.export.buttonOptions.icon}}</md-icon></button>
+    <button md-mini-fab (click)="exportTable()" *ngIf="tableProperties.export.buttonOptions.type === 'md-mini-fab'" [ngClass]="tableProperties.export.buttonOptions.position === 'upper-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.export.buttonOptions.icon">{{tableProperties.export.buttonOptions.icon}}</md-icon></button>
+    <br>
+  </div>
+
   <!-- TABLE  -->
   <md-table #table [dataSource]="mdTableData" mdSort>
 
@@ -97,6 +106,15 @@
                   [pageSizeOptions]="pageSizeOptions()">
     </md-paginator>
   </div> 
+
+  <!-- EXPORT BUTTON BOTTOM LEFT/RIGHT -->
+  <div *ngIf="tableProperties.export.toExcel && (tableProperties.export.buttonOptions.position === 'bottom-left' || tableProperties.export.buttonOptions.position === 'bottom-right')">
+    <br>
+    <button md-button (click)="exportTable()" *ngIf="tableProperties.export.buttonOptions.type === 'md-button'" [ngClass]="tableProperties.export.buttonOptions.position === 'bottom-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.export.buttonOptions.icon">{{tableProperties.export.buttonOptions.icon}}</md-icon> &nbsp; {{tableProperties.export.buttonOptions.text}}</button>
+    <button md-raised-button (click)="exportTable()" class="btnBottom" *ngIf="tableProperties.export.buttonOptions.type === 'md-raised-button'" [ngClass]="tableProperties.export.buttonOptions.position === 'bottom-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.export.buttonOptions.icon">{{tableProperties.export.buttonOptions.icon}}</md-icon> &nbsp; {{tableProperties.export.buttonOptions.text}}</button>
+    <button md-fab (click)="exportTable()" *ngIf="tableProperties.export.buttonOptions.type === 'md-fab'" [ngClass]="tableProperties.export.buttonOptions.position === 'bottom-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.export.buttonOptions.icon">{{tableProperties.export.buttonOptions.icon}}</md-icon></button>
+    <button md-mini-fab (click)="exportTable()" *ngIf="tableProperties.export.buttonOptions.type === 'md-mini-fab'" [ngClass]="tableProperties.export.buttonOptions.position === 'bottom-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.export.buttonOptions.icon">{{tableProperties.export.buttonOptions.icon}}</md-icon></button>
+  </div>
   
 </div>
 

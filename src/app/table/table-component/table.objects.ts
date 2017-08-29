@@ -23,9 +23,10 @@ export class TableProperties {
       emitFilterClick?: boolean;
     };
     maxHeight?: number;
-    elevation?: boolean;
+    elevation?: boolean | string; // TODO: determine if boolean or string needed or both?
     modalOptions?: ModalOptions;
     inlineEditing?: boolean;
+    export?: ExportOptions;
 }
 
 export class ColumnData {
@@ -65,5 +66,18 @@ export class ModalOptions {
             left?: string;
             boxShadow?: string;
         };
+    };
+}
+
+export class ExportOptions {
+    toExcel?: boolean;
+    fileName?: string;
+    buttonOptions?: {
+        text?: string; // Text for button to display
+        showText?: boolean;
+        icon?: string; // Material Icon string
+        showIcon?: boolean;
+        position?: string; // bottom-left, bottom-right, top-left, top-right (Default: bottom-right)
+        type?: string; // md-button, md-raised-button, md-fab, md-mini-fab
     };
 }

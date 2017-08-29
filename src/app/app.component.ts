@@ -1,3 +1,4 @@
+import { TableProperties, ColumnData } from './table/table-component/table.objects';
 import { Component, ComponentFactoryResolver } from '@angular/core';
 const faker = require('faker');
 
@@ -20,6 +21,7 @@ export class AppComponent {
                 {value: {code: 'MEX', population: 'some'}, view: 'Mexico'}
             ]
         },
+        // tslint:disable-next-line:max-line-length
         {heading: 'Payment Gross Amount', key: 'payment.grossAmount', pipeOptions: {currency: true, custom: (value) => value * 10}, hoverable: {backgroundColor: '#CCC'}},
         {buttonTitle: 'More Info', button: true, modalOrDropdown: true, iconBefore: 'accessibility', iconAfter: 'home'},
         {buttonTitle: '', button: true, mdButton: true, iconBefore: 'home'}
@@ -31,7 +33,7 @@ export class AppComponent {
         {heading: 'Postal Code', key: 'employee.postalCode'}
     ];
     public data: any[] = new Array<any>();
-    private tableProperties = {
+    private tableProperties: TableProperties = {
         // accordian: true,
         // modal: true,
         // inlineEditing: true,
@@ -41,7 +43,18 @@ export class AppComponent {
             pageSizeOptions: [4, 8, 16, 32, 2000]
         },
         maxHeight: 700,
-        elevation: 'mat-elevation-z2'
+        elevation: 'mat-elevation-z2',
+        export: {
+            toExcel: true,
+            buttonOptions: {
+                text: 'Export to .XLSX',
+                icon: 'snooze',
+                showIcon: true,
+                showText: true,
+                position: 'bottom-right',
+                type: 'md-raised-button'
+            }
+        }
     };
     private tablePropertiesNoPagination = {
         pagination: {
