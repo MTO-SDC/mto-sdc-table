@@ -2,12 +2,20 @@
      [ngStyle]="{'max-height.px': tableProperties? tableProperties.maxHeight? tableProperties.maxHeight : null : null}">
 
   <!-- FILTER  -->
-  <div [hidden]="hideFilterInput" class="example-header">
+  <div>
+  <span [hidden]="hideFilterInput" class="example-header adjLeft">
     <md-input-container floatPlaceholder="never">
       <!-- Filter Input  -->
       <input mdInput #filter placeholder="Filter users" (input)="paginator.pageIndex = 0"> <!-- Send to first page on filtering -->
     </md-input-container>
-  </div>
+  </span>
+  
+  <span class="adjRight">
+      <md-select *ngIf="tableProperties.selectColumnsToDisplay" multiple class="cell-input" [value]="displayedColumns" placeholder="Choose Columns to Display" (change)="updateVisibleColumns($event.value)">
+        <md-option *ngFor="let option of displayedColumnNames" [value]="option.value"> {{ option.view }} </md-option>
+      </md-select>
+  </span>
+</div>
 
   <!-- TABLE  -->
   <md-table #table [dataSource]="mdTableData" mdSort>
@@ -69,11 +77,11 @@
               <md-datepicker (selectedChanged)="dateCellValueUpdate($event, row, column)" #picker></md-datepicker>
             </div>
 
-              <!-- <md-select *ngIf="column.editing == row[uniqueKey] && column.select" [focus]="focusEventEmitter" (onClose)="" class="cell-input">
-                <md-option *ngFor="let option of column.select.options" [value]="option"> {{ option }} </md-option>
-              </md-select> -->
+            <md-select *ngIf="column.editing == row[uniqueKey] && column.select" [focus]="focusEventEmitter" class="cell-input">
+              <md-option *ngFor="let option of column.select.options" [value]="option"> {{ option }} </md-option>
+            </md-select>
 
-            <button *ngIf="column.button && (column.mdRaisedButton || (!column.mdButton && !column.mdFab && !column.mdMiniFab && !column.mdIconButton))" md-raised-button (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
+            <button *ngIf="column.button && (column.mdRaisedButton || (!column.mdButton && !column.mdFab && !column.mdMiniFab && !column.mdIconButton))" md-raised-button (click)="buttonClicked(i, row[uniqueKey], column)">
               <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
                 {{column.buttonTitle}}
               <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>

@@ -25,7 +25,7 @@ export class PipeJoin implements PipeTransform {
 
     if (pipeOptions.upperCase) {
       value = new UpperCasePipe().transform(value);
-    } else if (pipeOptions.lowCase) {
+    } else if (pipeOptions.lowerCase) {
       value = new LowerCasePipe().transform(value);
     }
     return value;

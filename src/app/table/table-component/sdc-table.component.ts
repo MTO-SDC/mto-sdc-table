@@ -46,6 +46,7 @@ export class SdcTableComponent implements OnInit {
     // Var's
     private expandedRow: number;
     private displayedColumns: Array<string> = new Array<string>();
+    private displayedColumnNames: Array<any> = new Array<any>();
     private mdTableData: ExampleDataSource;
     private hideFilterInput: boolean = true;
     private uniqueKey: string = 'uniqueTableId';
@@ -53,6 +54,7 @@ export class SdcTableComponent implements OnInit {
     private hideModal: boolean = false;
     private focusEventEmitter = new EventEmitter<boolean>();
     private hasButtonForCustomComponent: boolean = false;
+    private hasInitialDisplayColumnsSpecified: boolean = false;
 
     constructor(public resolver: ComponentFactoryResolver, public changeDetectorRef: ChangeDetectorRef) {}
 
@@ -69,7 +71,18 @@ export class SdcTableComponent implements OnInit {
                     this.hasButtonForCustomComponent = true;
                 }
 
-                this.displayedColumns.push(column.key);
+                if (!this.hasInitialDisplayColumnsSpecified) {
+                    if (column.initialDisplay !== undefined) {
+                        this.hasInitialDisplayColumnsSpecified = true;
+                        this.displayedColumns = [];
+                        column.initialDisplay ? this.displayedColumns.push(column.key) : null;
+                    } else {
+                        this.displayedColumns.push(column.key);
+                    }
+                } else {
+                    column.initialDisplay ? this.displayedColumns.push(column.key) : null;
+                }
+                this.displayedColumnNames.push({view: column.heading ? column.heading : column.buttonTitle ? column.buttonTitle : 'Column ' + this.columnInfo.indexOf(column), value: column.key});
 
                 if (column.filterable) {
                     this.hideFilterInput = false;
@@ -101,12 +114,12 @@ export class SdcTableComponent implements OnInit {
      * @param {Array<{[key: string]: any}} objArray
      * @param {Array<ColumnWithProperties>} columnInfoArray
      */
-    private generateDataSource(objArray: Array<{[key: string]: any}>, columnInfoArray: Array<ColumnWithProperties>): Array<{[key: string]: any}> {
-        let processedArray: Array<{[key: string]: any}> = new Array<{[key: string]: any}>();
+    private generateDataSource(objArray: Array<{[key: string]: any}>, columnInfoArray: Array<ColumnWithProperties>): Array<Array<any>> {
+        let processedArray: Array<Array<any>> = new Array<Array<any>>();
         // fill the processed array with objects based on their submitted ones and the desired columnInfo
         for ( let i = 0; i < objArray.length; i++ ) {
             let field: any;
-            let processedObject: {[key: string]: any} = {};
+            let processedObject: Array<any> = [];
             processedObject[this.uniqueKey] = i; // give each object a unique field with our unique key for row expanding
 
             columnInfoArray.forEach(column => {
@@ -170,6 +183,7 @@ export class SdcTableComponent implements OnInit {
      * @param {number} objId
      */
     private expandRow(i: number, objId: number): void {
+        console.log(this.factory, this.containers.toArray());
         // Set i equal to the appropriate index of the corresponding container that was clicked
         // NOTE: this is needed, when the table is sorted this.contianers is mixed up which leads to dropdowns opening in incorrect places
         let containerArray = this.containers.toArray();
@@ -309,6 +323,10 @@ export class SdcTableComponent implements OnInit {
             index: row[this.uniqueKey]
         });
         this.mdTableData.setData(this.generateDataSource(this.displayObjects, this.columnInfo));
+    }
+
+    private updateVisibleColumns(selectedColumnsArray): void {
+        this.displayedColumns = selectedColumnsArray;
     }
 }
 

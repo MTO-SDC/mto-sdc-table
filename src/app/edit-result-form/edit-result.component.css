@@ -1,0 +1,31 @@
+.table tr.selected td {
+  background-color:#2E2E67 !important;
+  color: white;
+}
+
+td, .canSort {
+  cursor: pointer;
+}
+
+.valid {
+  border: solid green 2px;
+}
+
+.invalid {
+  border: solid red 2px;
+}
+
+.mol-table-header{
+  cursor: pointer;
+}
+
+.input-wrapper{
+    position: relative;
+}
+
+.position{
+    top: 100%;
+    position:absolute;
+    z-index: 10;
+    width: 65%;
+}

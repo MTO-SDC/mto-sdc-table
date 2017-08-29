@@ -26,6 +26,7 @@ export class TableProperties {
     elevation?: boolean;
     modalOptions?: ModalOptions;
     inlineEditing?: boolean;
+    selectColumnsToDisplay?: boolean;
 }
 
 export class ColumnWithProperties {
@@ -59,6 +60,7 @@ export class ColumnWithProperties {
     public datepicker?: boolean;
     public minDate?: Date;
     public maxDate?: Date;
+    public initialDisplay?: boolean;
 
     constructor(obj) {
         this.filterable = true;

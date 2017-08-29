@@ -21,7 +21,7 @@ All features are optional.
 ## Getting Started
 
 ### Install
-``` npm install sdc-table ```
+``` npm install mto-sdc-table ```
 
 * Dependencies: 
 	* "@angular/animations": "^4.3.5"
@@ -115,6 +115,7 @@ export class TableProperties {
     elevation?: boolean;
     modalOptions?: ModalOptions;
     inlineEditing?: boolean;
+    selectColumnsToDisplay?: boolean;
 }
 
 export class ColumnWithProperties {
@@ -142,6 +143,7 @@ export class ColumnWithProperties {
     public datepicker?: boolean; // is cell a date object that should have a datepicker
     public minDate?: Date; // minimum date selectable
     public maxDate?: Date; // maximum date selectable
+    public initialDisplay?: boolean;
 }
 
 export class ModalOptions {
