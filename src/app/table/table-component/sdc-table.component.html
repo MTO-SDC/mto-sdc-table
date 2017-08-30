@@ -119,7 +119,7 @@
       </ng-container>
     </ng-container>
     <!-- BUILD HEADINGS -->
-    <md-header-row *cdkHeaderRowDef="displayedColumns" flex style="position: sticky; top: 0; background-color: inherit"></md-header-row>
+    <md-header-row *cdkHeaderRowDef="displayedColumns" flex style="position: sticky; top: 0; background-color: inherit; z-index: 100"></md-header-row>
     <!-- BUILD ROWS  -->
     <md-row *cdkRowDef="let row; columns: displayedColumns; let i=index;" [attr.id]="i" #cdkrow (click)="rowClicked(i, row[uniqueKey])">
     </md-row>
