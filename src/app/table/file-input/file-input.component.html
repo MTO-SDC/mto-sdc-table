@@ -1,0 +1,11 @@
+<div>
+   <input [accept]="accept" type="file" (change)="onNativeInputFileSelect($event); $event.stopPropagation();" #fileInput hidden />
+   <button type="button" md-button (click)="$event.stopPropagation(); selectFile()" *ngIf="buttonOptions.type === 'md-button'" [ngClass]="buttonOptions.position === 'upper-left' ? 'btnLeft' : 'btnRight'">
+     <md-icon *ngIf="buttonOptions.icon">{{buttonOptions.icon}}</md-icon>&nbsp; {{buttonOptions.text}}</button>
+    <button type="button" md-raised-button (click)="$event.stopPropagation(); selectFile()" *ngIf="buttonOptions.type === 'md-raised-button'" [ngClass]="buttonOptions.position === 'upper-left' ? 'btnLeft' : 'btnRight'">
+      <md-icon *ngIf="buttonOptions.icon">{{buttonOptions.icon}}</md-icon>&nbsp; {{buttonOptions.text}}</button>
+    <button type="button" md-fab (click)="$event.stopPropagation(); selectFile()" *ngIf="buttonOptions.type === 'md-fab'" [ngClass]="buttonOptions.position === 'upper-left' ? 'btnLeft' : 'btnRight'">
+      <md-icon *ngIf="buttonOptions.icon">{{buttonOptions.icon}}</md-icon>&nbsp; {{buttonOptions.text}}</button>
+    <button type="button" md-mini-fab (click)="$event.stopPropagation(); selectFile()" *ngIf="buttonOptions.type === 'md-mini-fab'" [ngClass]="buttonOptions.position === 'upper-left' ? 'btnLeft' : 'btnRight'">
+      <md-icon *ngIf="buttonOptions.icon">{{buttonOptions.icon}}</md-icon>&nbsp; {{buttonOptions.text}}</button>
+</div>

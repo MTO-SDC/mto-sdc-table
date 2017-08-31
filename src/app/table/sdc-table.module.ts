@@ -1,3 +1,4 @@
+import { SdcFileInputComponent } from './file-input/file-input.component';
 import { SdcModalComponent } from './modal/sdc-modal.component';
 import { CdkTableModule } from '@angular/cdk/table';
 import { SdcTableComponent } from './table-component/sdc-table.component';
@@ -26,6 +27,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     declarations: [
         SdcTableComponent,
         SdcModalComponent,
+        SdcFileInputComponent,
         FocusDirective,
         HoverDirective,
         PipeJoin

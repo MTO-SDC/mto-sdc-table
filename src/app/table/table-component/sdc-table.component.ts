@@ -23,6 +23,7 @@ function s2ab(s: string): ArrayBuffer {
     const buf = new ArrayBuffer(s.length);
     const view = new Uint8Array(buf);
     for (let i = 0; i !== s.length; i++) {
+        // tslint:disable-next-line:no-bitwise
         view[i] = s.charCodeAt(i) & 0xFF;
     }
     return buf;
@@ -41,6 +42,7 @@ export class SdcTableComponent implements OnInit {
     @ViewChild(MdPaginator) paginator: MdPaginator = null;
     @ViewChild(MdSort) sort: MdSort;
     @ViewChild('filter') filter: ElementRef;
+    @ViewChild('inputFile') hiddenFileInputElement: ElementRef;
 
     // OUTPUT
     @Output() private change: EventEmitter<any> = new EventEmitter<any>();
@@ -67,7 +69,9 @@ export class SdcTableComponent implements OnInit {
     private focusEventEmitter = new EventEmitter<boolean>();
     private hasButtonForCustomComponent: boolean = false;
     private wopts: XLSX.WritingOptions = { bookType: 'xlsx', type: 'binary'};
-    private data: AOA = [[1, 2], [3, 4]];
+    private displayedData: Array<{[key: string]: any}>;
+    private data: AOA = [['E', 'R', 'R', 'O', 'R'], [1, 2, 3, 'File', 'Generated', 'Incorrectly']];
+    private file: File;
 
     constructor(public resolver: ComponentFactoryResolver, public changeDetectorRef: ChangeDetectorRef) {}
 
@@ -93,7 +97,7 @@ export class SdcTableComponent implements OnInit {
         } else if (this.displayObjects.length > 0) {
             this.columnInfo = [];
             // tslint:disable-next-line:forin
-            for (let key in this.displayObjects[0]) {
+            for (const key in this.displayObjects[0]) {
                 this.displayedColumns.push(key);
                 this.columnInfo.push({heading: key, key: key});
             }
@@ -116,12 +120,13 @@ export class SdcTableComponent implements OnInit {
      * @param {Array<{[key: string]: any}} objArray
      * @param {Array<ColumnWithProperties>} columnInfoArray
      */
+    // tslint:disable-next-line:max-line-length
     private generateDataSource(objArray: Array<{[key: string]: any}>, columnInfoArray: Array<ColumnWithProperties>): Array<{[key: string]: any}> {
-        let processedArray: Array<{[key: string]: any}> = new Array<{[key: string]: any}>();
+        const processedArray: Array<{[key: string]: any}> = new Array<{[key: string]: any}>();
         // fill the processed array with objects based on their submitted ones and the desired columnInfo
         for ( let i = 0; i < objArray.length; i++ ) {
             let field: any;
-            let processedObject: {[key: string]: any} = {};
+            const processedObject: {[key: string]: any} = {};
             processedObject[this.uniqueKey] = i; // give each object a unique field with our unique key for row expanding
 
             columnInfoArray.forEach(column => {
@@ -149,6 +154,7 @@ export class SdcTableComponent implements OnInit {
             });
             processedArray.push(processedObject);
         }
+        this.displayedData = processedArray;
         return processedArray;
     }
 
@@ -187,14 +193,14 @@ export class SdcTableComponent implements OnInit {
     private expandRow(i: number, objId: number): void {
         // Set i equal to the appropriate index of the corresponding container that was clicked
         // NOTE: this is needed, when the table is sorted this.contianers is mixed up which leads to dropdowns opening in incorrect places
-        let containerArray = this.containers.toArray();
-        let x: number = i;
+        const containerArray = this.containers.toArray();
+        const x: number = i;
         containerArray.forEach((container, index) => {
             if ( +container.element.nativeElement.id === x) {
                 i = index;
             }
         });
-        let container = containerArray[i];
+        const container = containerArray[i];
 
         // Remove the collapsible row on other row click
         if ( this.expandedRow != null ) { containerArray[this.expandedRow].clear(); }
@@ -204,7 +210,7 @@ export class SdcTableComponent implements OnInit {
         } else { // Generate and display the appropriate component within the dropped row
 
             // Build the component
-            let messageComponent = container.createComponent(this.factory);
+            const messageComponent = container.createComponent(this.factory);
             messageComponent.instance['data'] = this.displayObjects[objId];
             messageComponent.instance['change'].subscribe(change => {
                 this.change.emit({data: change, index: objId});
@@ -255,10 +261,9 @@ export class SdcTableComponent implements OnInit {
      */
     private showModal(i: number, objId: number): void {
         // tslint:disable-next-line:max-line-length
-        let modalComponent: ComponentRef<SdcModalComponent> = this.modalRef.createComponent(this.resolver.resolveComponentFactory(SdcModalComponent));
+        const modalComponent: ComponentRef<SdcModalComponent> = this.modalRef.createComponent(this.resolver.resolveComponentFactory(SdcModalComponent));
         modalComponent.instance['componentFactory'] = this.factory;
         modalComponent.instance['objectToPassToComponent'] = this.displayObjects[objId];
-        modalComponent.instance['ng-content'] = 'HELLOEHELJELEJLEJ';
         modalComponent.instance['change'].subscribe(change => {
             this.change.emit({data: change.data, index: objId});
             this.mdTableData.setData(this.generateDataSource(this.displayObjects, this.columnInfo));
@@ -275,7 +280,7 @@ export class SdcTableComponent implements OnInit {
      */
     private updateObjectField(object: any, key: string, value: any): any {
         let splitkeys = [];
-        let objectToUpdate: Array<any> = [object];
+        const objectToUpdate: Array<any> = [object];
         key.includes('.') ? splitkeys = key.split('.') : splitkeys.push(key);
 
         for (let i = 0; i < splitkeys.length; i++) {
@@ -289,7 +294,9 @@ export class SdcTableComponent implements OnInit {
     }
 
     private cellClicked(row: any, column: ColumnWithProperties): void {
-        if (!row.__sumRow && !column.isSumColumn && !column.button && ((this.tableProperties && this.tableProperties.inlineEditing) || column.editable)) {
+        if (!row.__sumRow && !column.isSumColumn && !column.button && (
+            (this.tableProperties && this.tableProperties.inlineEditing) || column.editable)
+            ) {
             column.editing = row[this.uniqueKey];
             setTimeout(() => { this.focusEventEmitter.emit(true); }, 0);
         }
@@ -321,9 +328,9 @@ export class SdcTableComponent implements OnInit {
     /**
      * Function to export tableInformation to excel
      */
-    private exportTable(evt: any): void {
+    private exportTable(): void {
         // generate the date to export to excel
-        const dataArrays: AOA = this.generateAOA();
+        this.data = this.generateAOA();
         // generate the worksheet
         const ws = XLSX.utils.aoa_to_sheet(this.data);
 
@@ -335,7 +342,7 @@ export class SdcTableComponent implements OnInit {
         const wbout = XLSX.write(wb, this.wopts);
 
         // Check that the filename is appropriately passed
-        let checkedFileName: string = this.tableProperties.export.fileName;
+        let checkedFileName: string = this.tableProperties.IOOptions.fileName;
         if (checkedFileName) {
             const splitName: Array<string> = checkedFileName.split('.');
             if (splitName[splitName.length] !== 'xlsx') {
@@ -350,31 +357,89 @@ export class SdcTableComponent implements OnInit {
 
         console.log(fileName);
         saveAs(new Blob([s2ab(wbout)]), fileName);
-
-        // const target: DataTransfer = <DataTransfer>(evt.target);
-        // if (target.files.length !== 1) { throw new Error('Cannot upload multiple files on the on the entry'); }
-
-        // const reader = new FileReader();
-        // reader.onload = (e: any) => {
-        //     // read workbook
-        //     const bstr = e.target.result;
-        //     const wb = XLSX.read(bstr, {type: 'binary'});
-
-        //     // grab the first sheet
-        //     const wsname = wb.SheetNames[0];
-        //     const ws = wb.Sheets[wsname];
-
-        //     // save the data
-        //     this.data = <AOA>(XLSX.utils.sheet_to_json(ws, {header: 1}));
-        // };
-
-        // reader.readAsBinaryString(target.files[0]);
     }
 
     /**
      * Function to generate the Array of Arrays that XLSX requires to create an excel sheet
      */
     private generateAOA(): AOA {
+        const AoA: AOA = new Array<Array<any>>();
+        const headingsArray: Array<any> = new Array<any>();
+
+        this.displayedData.forEach((object, index) => {
+            const singularArray: Array<any> = new Array<any>();
+            let counter = 0;
+            // tslint:disable-next-line:forin
+            for (const key in object) {
+                // get the appropriate table headings
+                if (index === 0 && counter === 0) {
+                    this.columnInfo.forEach(colInfo => {
+                        headingsArray.push(colInfo.heading);
+                    });
+                }
+                if (counter !== 0) {
+                    singularArray.push(object[key]);
+                }
+                counter++;
+            }
+            if (index === 0) {
+                AoA.push(headingsArray);
+            }
+            AoA.push(singularArray);
+        });
+        return AoA;
+    }
+
+    /**
+     * Function to trigger the hidden file input tags click event
+     */
+    private async inputFile(evt: any) {
+        const target: DataTransfer = <DataTransfer>(evt.target);
+
+        if (+target.files.length !== 1) { throw new Error('Cannot upload multiple files on the entry'); }
+
+        const reader = new FileReader();
+
+        reader.onload = (e: any) => {
+            // Read the workbook
+            const bstr = e.target.result;
+            const wb = XLSX.read(bstr, {type: 'binary'});
+            // Get the first sheet
+            const wsname = wb.SheetNames[0];
+            const ws = wb.Sheets[wsname];
+            // Save the data
+            this.data = <AOA>(XLSX.utils.sheet_to_json(ws, {header: 1}));
+            console.log(this.data);
+            // Generate the displayObjects
+            this.getDisplayObjectsFromExcel(this.data);
+        };
+        const file = evt.target.files;
+        reader.readAsBinaryString(file[0]);
+    }
+
+    private getDisplayObjectsFromExcel(data: AOA): void {
+        let headers: Array<string> = null;
+        const keys: Array<string> =  new Array<string>();
+        const generatedObjects: Array<{[key: string]: any}> = new Array<{[key: string]: any}>();
+        // TODO: NEED TO GENERATE TABLE HEADINGS OBJECT AND TABLE PROPERTIES OBJECT
+        if (this.tableProperties.IOOptions.headers) {
+            headers = data[0];
+            data.shift();
+            // Replace all the spaces in the headers with . seperated keys for the object.
+            headers.forEach((header, index) => {
+                const key: string = header.replace(/ /g, '.');
+
+                // generatedObjects.push({});
+                // generatedObjectsheader.replace(/ /g, '.'));
+            });
+
+
+        } else {
+            // TODO: Build object without header
+            // TODO: Build fake keys
+        }
+
+        this.mdTableData.setData(data);
     }
 
     private dateCellValueUpdate(updateValue: any, row, column: ColumnWithProperties): void {
@@ -384,6 +449,7 @@ export class SdcTableComponent implements OnInit {
         });
         this.mdTableData.setData(this.generateDataSource(this.displayObjects, this.columnInfo));
     }
+
 }
 
 /**
@@ -406,7 +472,11 @@ export class ExampleDataSource extends DataSource<any> {
 
     private columnDataArray: ColumnWithProperties[];
 
-    constructor(private paginator: MdPaginator, private sort: MdSort, public changeDetectorRef: ChangeDetectorRef, private columnDataArrayInput: ColumnWithProperties[]) {
+    constructor(
+        private paginator: MdPaginator,
+        private sort: MdSort,
+        public changeDetectorRef: ChangeDetectorRef,
+        private columnDataArrayInput: ColumnWithProperties[]) {
         super();
         this.columnDataArray = columnDataArrayInput;
     }

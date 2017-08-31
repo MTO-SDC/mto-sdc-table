@@ -26,7 +26,7 @@ export class TableProperties {
     elevation?: boolean | string; // TODO: determine if boolean or string needed or both?
     modalOptions?: ModalOptions;
     inlineEditing?: boolean;
-    export?: ExportOptions;
+    IOOptions?: InputOutputOptions;
 }
 
 export class ColumnWithProperties {
@@ -82,15 +82,21 @@ export class ModalOptions {
     };
 }
 
-export class ExportOptions {
-    toExcel?: boolean;
-    fileName?: string;
-    buttonOptions?: {
-        text?: string; // Text for button to display
-        showText?: boolean;
-        icon?: string; // Material Icon string
-        showIcon?: boolean;
-        position?: string; // bottom-left, bottom-right, top-left, top-right (Default: bottom-right)
-        type?: string; // md-button, md-raised-button, md-fab, md-mini-fab
-    };
+export class ButtonOptions {
+    text?: string; // Text for button to display
+    showText?: boolean;
+    icon?: string; // Material Icon string
+    showIcon?: boolean;
+    position?: string; // bottom-left, bottom-right, top-left, top-right (Default: bottom-right)
+    type?: string; // md-button, md-raised-button, md-fab, md-mini-fab
 }
+
+export class InputOutputOptions {
+    toExcel?: boolean; // import from excel or export to excel (more options coming later probably if I feel like it, idunno)
+    exportOrImport?: string; // export or import
+    fileName?: string; // the filename you want to output to
+    buttonOptions?: ButtonOptions; // options of buttons
+    headers?: boolean; // If headers are to be imported/exported
+}
+
+

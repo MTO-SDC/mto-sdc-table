@@ -10,12 +10,15 @@
   </div>
 
    <!-- EXPORT BUTTON UPPER LEFT/RIGHT -->
-  <div *ngIf="tableProperties.export.toExcel && (tableProperties.export.buttonOptions.position === 'upper-left' || tableProperties.export.buttonOptions.position === 'upper-right')">
-    <button md-button (click)="exportTable()" *ngIf="tableProperties.export.buttonOptions.type === 'md-button'" [ngClass]="tableProperties.export.buttonOptions.position === 'upper-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.export.buttonOptions.icon">{{tableProperties.export.buttonOptions.icon}}</md-icon> &nbsp; {{tableProperties.export.buttonOptions.text}}</button>
-    <button md-raised-button (click)="exportTable()" *ngIf="tableProperties.export.buttonOptions.type === 'md-raised-button'" [ngClass]="tableProperties.export.buttonOptions.position === 'upper-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.export.buttonOptions.icon">{{tableProperties.export.buttonOptions.icon}}</md-icon> &nbsp; {{tableProperties.export.buttonOptions.text}}</button>
-    <button md-fab (click)="exportTable()" *ngIf="tableProperties.export.buttonOptions.type === 'md-fab'" [ngClass]="tableProperties.export.buttonOptions.position === 'upper-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.export.buttonOptions.icon">{{tableProperties.export.buttonOptions.icon}}</md-icon></button>
-    <button md-mini-fab (click)="exportTable()" *ngIf="tableProperties.export.buttonOptions.type === 'md-mini-fab'" [ngClass]="tableProperties.export.buttonOptions.position === 'upper-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.export.buttonOptions.icon">{{tableProperties.export.buttonOptions.icon}}</md-icon></button>
-    <br>
+  <div *ngIf="tableProperties.IOOptions.exportOrImport === 'export' && (tableProperties.IOOptions.buttonOptions.position === 'upper-left' || tableProperties.IOOptions.buttonOptions.position === 'upper-right')">
+    <button md-button (click)="exportTable()" type="button" *ngIf="tableProperties.IOOptions.buttonOptions.type === 'md-button'" [ngClass]="tableProperties.IOOptions.buttonOptions.position === 'upper-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.IOOptions.buttonOptions.icon">{{tableProperties.IOOptions.buttonOptions.icon}}</md-icon> &nbsp; {{tableProperties.IOOptions.buttonOptions.text}}</button>
+    <button md-raised-button (click)="exportTable()" type="button" *ngIf="tableProperties.IOOptions.buttonOptions.type === 'md-raised-button'" [ngClass]="tableProperties.IOOptions.buttonOptions.position === 'upper-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.IOOptions.buttonOptions.icon">{{tableProperties.IOOptions.buttonOptions.icon}}</md-icon> &nbsp; {{tableProperties.IOOptions.buttonOptions.text}}</button>
+    <button md-fab (click)="exportTable()" type="button" *ngIf="tableProperties.IOOptions.buttonOptions.type === 'md-fab'" [ngClass]="tableProperties.IOOptions.buttonOptions.position === 'upper-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.IOOptions.buttonOptions.icon">{{tableProperties.IOOptions.buttonOptions.icon}}</md-icon></button>
+    <button md-mini-fab (click)="exportTable()" type="button" *ngIf="tableProperties.IOOptions.buttonOptions.type === 'md-mini-fab'" [ngClass]="tableProperties.IOOptions.buttonOptions.position === 'upper-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.IOOptions.buttonOptions.icon">{{tableProperties.IOOptions.buttonOptions.icon}}</md-icon></button>
+  </div>
+   <!-- IMPORT BUTTON UPPER LEFT/RIGHT -->
+  <div *ngIf="tableProperties.IOOptions.exportOrImport === 'import' && (tableProperties.IOOptions.buttonOptions.position === 'upper-left' || tableProperties.IOOptions.buttonOptions.position === 'upper-right')">
+    <sdc-file-input (onFileSelect)="inputFile($event)" [accept]="'.xlsx'" [buttonOptions]="tableProperties.IOOptions.buttonOptions"></sdc-file-input>
   </div>
 
   <!-- TABLE  -->
@@ -82,7 +85,7 @@
                 <md-option *ngFor="let option of column.select.options" [value]="option"> {{ option }} </md-option>
               </md-select> -->
 
-            <button *ngIf="column.button && (column.mdRaisedButton || (!column.mdButton && !column.mdFab && !column.mdMiniFab && !column.mdIconButton))" md-raised-button (click)="buttonClicked(i, row[uniqueKey], column.modalOrDropdown)">
+            <button *ngIf="column.button && (column.mdRaisedButton || (!column.mdButton && !column.mdFab && !column.mdMiniFab && !column.mdIconButton))" md-raised-button (click)="buttonClicked(i, row[uniqueKey], column)">
               <md-icon *ngIf="column.iconBefore">{{column.iconBefore}}</md-icon>
                 {{column.buttonTitle}}
               <md-icon *ngIf="column.iconAfter">{{column.iconAfter}}</md-icon>
@@ -138,13 +141,13 @@
     </md-paginator>
   </div> 
 
-  <!-- EXPORT BUTTON BOTTOM LEFT/RIGHT -->
-  <div *ngIf="tableProperties.export.toExcel && (tableProperties.export.buttonOptions.position === 'bottom-left' || tableProperties.export.buttonOptions.position === 'bottom-right')">
+  <!-- IOOptions BUTTON BOTTOM LEFT/RIGHT -->
+  <div *ngIf="tableProperties.IOOptions.exportOrImport === 'export' && (tableProperties.IOOptions.buttonOptions.position === 'bottom-left' || tableProperties.IOOptions.buttonOptions.position === 'bottom-right')">
     <br>
-    <button md-button (click)="exportTable()" *ngIf="tableProperties.export.buttonOptions.type === 'md-button'" [ngClass]="tableProperties.export.buttonOptions.position === 'bottom-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.export.buttonOptions.icon">{{tableProperties.export.buttonOptions.icon}}</md-icon> &nbsp; {{tableProperties.export.buttonOptions.text}}</button>
-    <button md-raised-button (click)="exportTable()" class="btnBottom" *ngIf="tableProperties.export.buttonOptions.type === 'md-raised-button'" [ngClass]="tableProperties.export.buttonOptions.position === 'bottom-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.export.buttonOptions.icon">{{tableProperties.export.buttonOptions.icon}}</md-icon> &nbsp; {{tableProperties.export.buttonOptions.text}}</button>
-    <button md-fab (click)="exportTable()" *ngIf="tableProperties.export.buttonOptions.type === 'md-fab'" [ngClass]="tableProperties.export.buttonOptions.position === 'bottom-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.export.buttonOptions.icon">{{tableProperties.export.buttonOptions.icon}}</md-icon></button>
-    <button md-mini-fab (click)="exportTable()" *ngIf="tableProperties.export.buttonOptions.type === 'md-mini-fab'" [ngClass]="tableProperties.export.buttonOptions.position === 'bottom-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.export.buttonOptions.icon">{{tableProperties.export.buttonOptions.icon}}</md-icon></button>
+    <button md-button (click)="exportTable()" type="button" *ngIf="tableProperties.IOOptions.buttonOptions.type === 'md-button'" [ngClass]="tableProperties.IOOptions.buttonOptions.position === 'bottom-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.IOOptions.buttonOptions.icon">{{tableProperties.IOOptions.buttonOptions.icon}}</md-icon> &nbsp; {{tableProperties.IOOptions.buttonOptions.text}}</button>
+    <button md-raised-button (click)="exportTable()" type="button" class="btnBottom" *ngIf="tableProperties.IOOptions.buttonOptions.type === 'md-raised-button'" [ngClass]="tableProperties.IOOptions.buttonOptions.position === 'bottom-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.IOOptions.buttonOptions.icon">{{tableProperties.IOOptions.buttonOptions.icon}}</md-icon> &nbsp; {{tableProperties.IOOptions.buttonOptions.text}}</button>
+    <button md-fab (click)="exportTable()" type="button" *ngIf="tableProperties.IOOptions.buttonOptions.type === 'md-fab'" [ngClass]="tableProperties.IOOptions.buttonOptions.position === 'bottom-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.IOOptions.buttonOptions.icon">{{tableProperties.IOOptions.buttonOptions.icon}}</md-icon></button>
+    <button md-mini-fab (click)="exportTable()" type="button" *ngIf="tableProperties.IOOptions.buttonOptions.type === 'md-mini-fab'" [ngClass]="tableProperties.IOOptions.buttonOptions.position === 'bottom-left' ? 'btnLeft' : 'btnRight'"><md-icon *ngIf="tableProperties.IOOptions.buttonOptions.icon">{{tableProperties.IOOptions.buttonOptions.icon}}</md-icon></button>
   </div>
   
 </div>
