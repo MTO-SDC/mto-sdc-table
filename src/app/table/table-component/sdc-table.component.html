@@ -1,17 +1,17 @@
-<div [ngClass]="{'example-container': tableProperties && tableProperties.maxHeight, 'mat-elevation-z8': tableProperties && tableProperties.elevation}"
+<div [ngClass]="{'sdc-container': tableProperties && tableProperties.maxHeight, 'mat-elevation-z8': tableProperties && tableProperties.elevation}"
      [ngStyle]="{'max-height.px': tableProperties? tableProperties.maxHeight? tableProperties.maxHeight : null : null}">
 
   <!-- FILTER  -->
   <div>
-  <span [hidden]="hideFilterInput" class="example-header adjLeft">
+  <span [hidden]="hideFilterInput" class="sdc-header adjLeft">
     <md-input-container floatPlaceholder="never">
       <!-- Filter Input  -->
-      <input mdInput #filter placeholder="Filter users" (input)="paginator.pageIndex = 0"> <!-- Send to first page on filtering -->
+      <input mdInput #filter placeholder="Filter" (input)="paginator.pageIndex = 0"> <!-- Send to first page on filtering -->
     </md-input-container>
   </span>
   
   <span class="adjRight">
-      <md-select *ngIf="tableProperties.selectColumnsToDisplay" multiple class="cell-input" [value]="displayedColumns" placeholder="Choose Columns to Display" (change)="updateVisibleColumns($event.value)">
+      <md-select *ngIf="tableProperties && tableProperties.selectColumnsToDisplay" multiple class="cell-input" [value]="displayedColumns" placeholder="Choose Columns to Display" (change)="updateVisibleColumns($event.value)">
         <md-option *ngFor="let option of displayedColumnNames" [value]="option.value"> {{ option.view }} </md-option>
       </md-select>
   </span>

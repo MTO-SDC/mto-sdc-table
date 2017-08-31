@@ -7,6 +7,7 @@ import { MdPaginator, MdSort, MdDialog } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { PipeJoin } from './../pipe-join/sdc-pipe-join.pipe';
+import { SdcDataSource } from './sdc-data-source';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
@@ -14,7 +15,6 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/observable/fromEvent';
-
 @Component({
     selector: 'sdc-table',
     templateUrl: './sdc-table.component.html',
@@ -39,7 +39,7 @@ export class SdcTableComponent implements OnInit {
     // Data for table heading
     @Input() private columnInfo: Array<ColumnWithProperties>;
     // Table Data
-    @Input() private displayObjects: Array<{[key: string]: any}>;
+    @Input() private displayObjects: Array<{[key: string]: any}> = [];
     // Table properties
     @Input() private tableProperties: TableProperties;
 
@@ -47,7 +47,7 @@ export class SdcTableComponent implements OnInit {
     private expandedRow: number;
     private displayedColumns: Array<string> = new Array<string>();
     private displayedColumnNames: Array<any> = new Array<any>();
-    private mdTableData: ExampleDataSource;
+    private mdTableData: SdcDataSource;
     private hideFilterInput: boolean = true;
     private uniqueKey: string = 'uniqueTableId';
     private uniqueBtnKey: string = 'uniqueBtnKey';
@@ -97,7 +97,7 @@ export class SdcTableComponent implements OnInit {
             }
         }
 
-        this.mdTableData = new ExampleDataSource(this.paginator, this.sort, this.changeDetectorRef, this.columnInfo);
+        this.mdTableData = new SdcDataSource(this.paginator, this.sort, this.changeDetectorRef, this.columnInfo);
         this.mdTableData.setData(this.generateDataSource(this.displayObjects, this.columnInfo));
 
         Observable.fromEvent(this.filter.nativeElement, 'keyup')
@@ -107,19 +107,18 @@ export class SdcTableComponent implements OnInit {
             if (!this.mdTableData) { return; }
             this.mdTableData.filter = this.filter.nativeElement.value;
         });
-
     }
     /**
      * Function to generate the appropriate DataSource objects for the table
      * @param {Array<{[key: string]: any}} objArray
      * @param {Array<ColumnWithProperties>} columnInfoArray
      */
-    private generateDataSource(objArray: Array<{[key: string]: any}>, columnInfoArray: Array<ColumnWithProperties>): Array<Array<any>> {
-        let processedArray: Array<Array<any>> = new Array<Array<any>>();
+    private generateDataSource(objArray: Array<{[key: string]: any}>, columnInfoArray: Array<ColumnWithProperties>): Array<{[key: string]: any}> {
+        let processedArray: Array<{[key: string]: any}> = new Array<{[key: string]: any}>();
         // fill the processed array with objects based on their submitted ones and the desired columnInfo
         for ( let i = 0; i < objArray.length; i++ ) {
             let field: any;
-            let processedObject: Array<any> = [];
+            let processedObject: {[key: string]: any} = {};
             processedObject[this.uniqueKey] = i; // give each object a unique field with our unique key for row expanding
 
             columnInfoArray.forEach(column => {
@@ -327,134 +326,5 @@ export class SdcTableComponent implements OnInit {
 
     private updateVisibleColumns(selectedColumnsArray): void {
         this.displayedColumns = selectedColumnsArray;
-    }
-}
-
-/**
- * Data source to provide what data should be rendered in the table. The observable provided
- * in connect should emit exactly the data that should be rendered by the table. If the data is
- * altered, the observable should emit that new set of data on the stream. In our case here,
- * we return a stream that contains only one set of data that doesn't change.
- */
-export class ExampleDataSource extends DataSource<any> {
-
-    /** Stream that emits whenever the data has been modified. */
-    dataChange: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-    get data(): any[] { return this.dataChange.value; }
-
-    // public data: any;
-    public tableLength: number = 0;
-    filterChange = new BehaviorSubject('');
-    get filter(): string { return this.filterChange.value; }
-    set filter(filter: string) { this.filterChange.next(filter); }
-
-    private columnDataArray: ColumnWithProperties[];
-
-    constructor(private paginator: MdPaginator, private sort: MdSort, public changeDetectorRef: ChangeDetectorRef, private columnDataArrayInput: ColumnWithProperties[]) {
-        super();
-        this.columnDataArray = columnDataArrayInput;
-    }
-
-    setData(data) {
-        this.dataChange.next(data);
-        this.changeDetectorRef.detectChanges();
-    }
-
-    /** Connect function called by the table to retrieve one stream containing the data to render. */
-    connect(): Observable<Element[] | any[]> {
-         const displayDataChanges = [
-            this.dataChange,
-            this.paginator ? this.paginator.page : Observable.of(null),
-            this.sort.mdSortChange,
-            this.filterChange
-        ];
-
-        return Observable.merge(...displayDataChanges).map(() => {
-            const columnSums = {};
-            let updatedTableRows = this.getSortedData().filter((item) => {
-                if (this.filter === '') {
-                    return true;
-                }
-
-                for (const key in item) {
-                    if (item.hasOwnProperty(key)) {
-                        const columnSettings: ColumnWithProperties = this.columnDataArray.filter(currentItem => currentItem.key === key)[0];
-
-                        if (columnSettings && columnSettings.filterable) {
-
-                            if (('' + item[key]).toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) {
-                                return true;
-                            }
-
-                            // Also filter by the value after the pipe
-                            if (columnSettings.pipeOptions) {
-                                const resultAfterPipe = new PipeJoin().transform(item[key], columnSettings.pipeOptions);
-
-                                if (resultAfterPipe.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) {
-                                    return true;
-                                }
-                            }
-
-                        }
-                    }
-                }
-
-                return false;
-            });
-
-            for (const updatedTableRow of updatedTableRows) {
-                for (const rowKey in updatedTableRow) {
-                    if (updatedTableRow.hasOwnProperty(rowKey)) {
-                        // COLUMN SUM: Add this number to the sum
-                        const columnSettings: ColumnWithProperties = this.columnDataArray.filter(item => item.key === rowKey)[0];
-                        if (columnSettings && columnSettings.showSum) {
-                            columnSums[columnSettings.key] = columnSums[columnSettings.key] || 0; // Initialize to 0 if necessary
-                            columnSums[columnSettings.key] += Number(updatedTableRow[rowKey]);
-                        }
-
-                        // ROW SUM: Sum all specified columns
-                        if (columnSettings && columnSettings.isSumColumn) {
-                            updatedTableRow[rowKey] = 0;
-                            for (const columnToSum of columnSettings.isSumColumn.columnsToSum) {
-                                updatedTableRow[rowKey] += Number(updatedTableRow[columnToSum]);
-                            }
-                        }
-                    }
-                }
-            }
-
-            this.tableLength = updatedTableRows.length;
-            if (this.paginator) {
-                updatedTableRows = updatedTableRows.splice(this.paginator.pageIndex * this.paginator.pageSize, this.paginator.pageSize);
-            }
-
-            // At least one COLUMN sum, so add a new row to the table
-            if (Object.keys(columnSums).length > 0) {
-                columnSums['__sumRow'] = true;
-                updatedTableRows.push(columnSums);
-            }
-
-            return updatedTableRows;
-        });
-    }
-
-    disconnect() {}
-
-    /** Returns a sorted copy of the database data. */
-    getSortedData(): any[] {
-        const data = this.data.slice();
-        if (!this.sort.active || this.sort.direction === '') { return data; }
-
-        return data.sort((a, b) => {
-            let propertyA: number|string = '';
-            let propertyB: number|string = '';
-
-            [propertyA, propertyB] = [a[this.sort.active], b[this.sort.active]];
-
-            const valueA = isNaN(+propertyA) ? propertyA : +propertyA;
-            const valueB = isNaN(+propertyB) ? propertyB : +propertyB;
-
-            return (valueA < valueB ? -1 : 1) * (this.sort.direction === 'asc' ? 1 : -1);
-        });
     }
 }

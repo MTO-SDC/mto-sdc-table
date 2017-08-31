@@ -1,5 +1,5 @@
 /* Structure */
- .example-container {
+ .sdc-container {
   display: flex; 
   flex-direction: column; 
   max-height: 500px;
@@ -28,7 +28,7 @@ md-cell.hoverable:hover{
   background-color: red;
 }
   
-/* .example-header {
+/* .sdc-header {
   min-height: 64px;
   display: flex;
   align-items: center;
@@ -36,7 +36,7 @@ md-cell.hoverable:hover{
   font-size: 20px;
 } */
  
- .example-header {
+ .sdc-header {
    width: 100%;
   min-height: 64px;
   align-items: baseline;
