@@ -22,6 +22,8 @@ import { FocusDirective } from './../focus-directive/sdc-focus.directive';
 import { HoverDirective } from './../sdc-hover-directive/sdc-hover.directive';
 import { PipeJoin } from './../pipe-join/sdc-pipe-join.pipe';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
 const faker = require('faker');
 
 describe('SdcTableComponent', () => {
@@ -32,16 +34,16 @@ describe('SdcTableComponent', () => {
         new ColumnWithProperties({heading: 'First Name', initialDisplay: true, editable: true, sortable: true, key: 'employee.firstName', hoverable: true, filterable: false}),
         new ColumnWithProperties({heading: 'Last Name', sortable: true, key: 'employee.lastName', hoverable: true, filterable: false }),
         new ColumnWithProperties({heading: 'Address', key: 'employee.addressLine1', select: [1, 2, 3, 4, 5], filterable: false}),
-        new ColumnWithProperties({heading: 'Payment Gross Amount', key: 'payment.grossAmount', pipeOptions: {currency: true}, hoverable: true, showSum: true, filterable: false}),
+        new ColumnWithProperties({heading: 'Payment Gross Amount', key: 'payment.grossAmount', pipeOptions: {currency: true}, hoverable: true, showSum: true, filterable: true}),
         new ColumnWithProperties({heading: 'Payment Net Amount', key: 'payment.netAmount', hoverable: true, showSum: { title: 'Final:' }, filterable: false}),
-        new ColumnWithProperties({buttonTitle: 'More Info', button: true, openCustomComponent: true, iconBefore: 'accessibility', iconAfter: 'home'}),
+        new ColumnWithProperties({buttonTitle: 'More Info', button: true, openCustomComponent: true, iconBefore: 'accessibility', iconAfter: 'home', filterable: false}),
         new ColumnWithProperties({buttonTitle: '', button: true, mdButton: true, iconBefore: 'home', filterable: false}),
         new ColumnWithProperties({heading: 'Total', initialDisplay: true, isSumColumn: { columnsToSum: ['payment.grossAmount', 'payment.netAmount'] }, pipeOptions: {currency: true}, sortable: true, filterable: false})
     ];
     const numberOfObjects: number = 10;
     let testDisplayObjects: Array<any> = [];
     for (let i = 0; i < numberOfObjects; i++) {
-        testDisplayObjects.push({employee: {firstName: faker.name.firstName(), lastName: faker.name.lastName(), country: {code: 'MEX', population: 'some'}}, birthDate: faker.date.past(), payment: {grossAmount: faker.random.number(2000), netAmount: faker.random.number(2000)}});
+        testDisplayObjects.push({employee: {firstName: faker.name.firstName(), lastName: faker.name.lastName(), country: {code: 'MEX', population: 'some'}}, birthDate: faker.date.past(), payment: {grossAmount: i+1, netAmount: faker.random.number(2000)}});
     }
 
     beforeEach(async(() => {
@@ -313,6 +315,83 @@ describe('SdcTableComponent', () => {
                 expect(component.change.emit).toHaveBeenCalled();
                 expect(component.updateObjectField).toHaveBeenCalled();
                 expect(component.mdTableData.setData).toHaveBeenCalled();
+            });
+        });
+    });
+
+    describe('SdcDataSource', () => {
+        beforeEach(() => {
+            component.columnInfo = testColumnInfo;
+            component.displayObjects = testDisplayObjects;
+            fixture.detectChanges();
+            spyOn(component.mdTableData.changeDetectorRef, 'detectChanges');
+        });
+
+        describe('setData', () => {
+            it('should set the data property to the array passed and detect changes', () => {
+                component.mdTableData.setData([1, 2, 3, 4, 5]);
+
+                expect(component.mdTableData.data).toEqual([1, 2, 3, 4, 5]);
+                expect(component.mdTableData.changeDetectorRef.detectChanges).toHaveBeenCalled();
+            });
+        });
+
+        describe('getSortedData', () => {
+            it('should return the passed array sorted in ascending order', () => {
+                component.mdTableData.sort.active = 'active';
+                component.mdTableData.sort.direction = 'asc';
+                component.mdTableData.setData([{active: 'c'}, {active: 'a'}, {active: 'b'}, {active: 1}, {active: 2}, {active: 3}]);
+                expect(component.mdTableData.getSortedData()).toEqual([{active: 1}, {active: 2}, {active: 3}, {active: 'a'}, {active: 'b'}, {active: 'c'}]);
+            });
+
+            it('should return the passed array unsorted', () => {
+                component.mdTableData.setData([{active: 'c'}, {active: 'a'}, {active: 'b'}, {active: 1}, {active: 2}, {active: 3}]);
+                expect(component.mdTableData.getSortedData()).toEqual([{active: 'c'}, {active: 'a'}, {active: 'b'}, {active: 1}, {active: 2}, {active: 3}]);
+            });
+
+            it('should return the passed array sorted in descending order', () => {
+                component.mdTableData.sort.active = 'active';
+                component.mdTableData.sort.direction = 'desc';
+                component.mdTableData.setData([{active: 'c'}, {active: 'a'}, {active: 'b'}, {active: 1}, {active: 2}, {active: 3}]);
+                expect(component.mdTableData.getSortedData()).toEqual([{active: 'c'}, {active: 'b'}, {active: 'a'}, {active: 3}, {active: 2}, {active: 1}]);
+            });
+        });
+
+        describe('connect', () => {
+            it('should return the data array with extra entry for totals', () => {
+                component.mdTableData.connect().subscribe((value) => {
+                    for (let i = 0; i < component.mdTableData.data.length; i++) {
+                        expect(value[i]).toEqual(component.mdTableData.data[i]);
+                    }
+                    expect(value.length).toEqual(component.mdTableData.data.length + 1);
+                });
+            });
+
+            it('should paginate the returned array', () => {
+                component.mdTableData.paginator = {
+                    page: Observable.of(0),
+                    pageSize: 5,
+                    pageIndex: 0
+                };
+
+                component.mdTableData.connect().subscribe((value) => {
+                    expect(value.length).toBe(6);
+                });
+            });
+
+            it('should filter the returned array before pipe', () => {
+                component.mdTableData.filter = '10';
+
+                component.mdTableData.connect().subscribe((value) => {
+                    expect(value.length).toBe(2); // 1 plus a sum row
+                });
+            });
+            it('should filter the returned array after pipe', () => {
+                component.mdTableData.filter = '$10';
+
+                component.mdTableData.connect().subscribe((value) => {
+                    expect(value.length).toBe(2); // 1 plus a sum row
+                });
             });
         });
     });

@@ -60,13 +60,11 @@ export class SdcDataSource extends DataSource<any> {
                 if (this.filter === '') {
                     return true;
                 }
-
                 for (const key in item) {
                     if (item.hasOwnProperty(key)) {
                         const columnSettings: ColumnWithProperties = this.columnDataArray.filter(currentItem => currentItem.key === key)[0];
 
                         if (columnSettings && columnSettings.filterable) {
-
                             if (('' + item[key]).toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) {
                                 return true;
                             }
@@ -79,7 +77,6 @@ export class SdcDataSource extends DataSource<any> {
                                     return true;
                                 }
                             }
-
                         }
                     }
                 }
@@ -143,3 +140,4 @@ export class SdcDataSource extends DataSource<any> {
         });
     }
 }
+ 
