@@ -78,7 +78,6 @@ The SdcTableComponent takes the following inputs:
 @Input() private displayObjects: Array<{[key: string]: any}>;
 // Table properties
 @Input() private tableProperties: TableProperties;
-
 ```
 
 The ColumnWithProperties object contains all the information needed to display the appropriate fields within the table. The table properties object used to define table behaviour.

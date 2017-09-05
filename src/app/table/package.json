@@ -1,13 +1,22 @@
 {
   "name": "mto-sdc-table",
-  "version": "0.5.1",
+  "version": "0.6.1",
   "description": "A versatile table module built using Angular Material",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "private": false,
   "keywords": [
-    "table", "material", "angular", "data", "datatable", "modal", "accordian", "dropdown", "inline", "editing"
+    "table",
+    "material",
+    "angular",
+    "data",
+    "datatable",
+    "modal",
+    "accordian",
+    "dropdown",
+    "inline",
+    "editing"
   ],
   "author": "MTO-SDC",
   "contributors": [

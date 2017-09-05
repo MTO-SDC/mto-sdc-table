@@ -1,6 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, AfterContentInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { CookieService } from 'angular2-cookie/core';
 import { Router } from '@angular/router';
 
 @Component({
